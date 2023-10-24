@@ -88,7 +88,6 @@ Run-AlPipeline @params `
     -enableTaskScheduler:$enableTaskScheduler `
     -NewBcContainer {
         Param([Hashtable]$parameters)
-        $parameters += @{ "dns" = "8.8.8.8" }
         New-BcContainer @parameters
         Invoke-ScriptInBcContainer $parameters.ContainerName -scriptblock {
             $progressPreference = 'SilentlyContinue'
