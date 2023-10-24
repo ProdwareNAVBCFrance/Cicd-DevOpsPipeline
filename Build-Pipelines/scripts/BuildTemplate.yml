@@ -1,7 +1,7 @@
 
 parameters:
 - name: EnableAppSourceProcess
-  type: Boolean
+  type: boolean
   default: false
 
 steps:
