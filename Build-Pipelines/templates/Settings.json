@@ -1,0 +1,54 @@
+{
+    "name": "Project",
+    "memoryLimit": "",
+    "installApps": "https://cibsbcdevgrpstorage.blob.core.windows.net/internallibrary-release/latest/apps.zip,https://cibsbcdevgrpstorage.blob.core.windows.net/telemetrylibrary-release/latest/apps.zip",
+    "previousApps": "",
+    "previewApps": "",
+    "appFolders": "app",
+    "testFolders": "test",
+    "enableTaskScheduler": false,    
+    "installTestFramework": true,
+    "installTestLibraries": true,
+    "installPerformanceToolkit": false,
+    "doNotSignApps": false,
+    "enableCodeCop": true,
+    "enableAppSourceCop": true,
+    "enablePerTenantExtensionCop": false,
+    "enableUICop": true,
+    "escapeFromCops": false,
+    "rulesetFile": "",
+    "useDefaultAppSourceRuleSet": false,    
+    "appSourceCopMandatoryAffixes": " PM PWD,PMPWD",
+    "appSourceCopSupportedCountries": "GB,BE,FR,DE,NL,ES,AT,CH",
+    "additionalCountries": "GB,BE,FR,DE,NL,ES,AT,CH",
+    "bcContainerHelperVersion": "",
+    "vaultNameForLocal": "cibs-bc-DevKeyVault",
+    "versions": [
+        {
+            "version": "currentsaas",
+            "artifact": "///base/Current",
+            "cacheImage": true,
+            "CreateRuntimePackages": true
+        },
+        {
+            "version": "nextmajorsaas",
+            "artifact": "///base/NextMajor/{INSIDERSASTOKEN}",
+            "cacheImage": true
+        },
+        {
+            "version": "nextminorsaas",
+            "artifact": "///base/NextMinor/{INSIDERSASTOKEN}",
+            "cacheImage": true
+        },
+        {
+            "version": "ci",
+            "artifact": "//23.0.12034.12676/base/Closest",
+            "cacheImage": true,
+            "CreateRuntimePackages": true
+        }
+    ],
+    "appVersion": "23.0",
+    "appRequiredBCVersion": "23.0",
+    "appBuild": "yyMM",
+    "targetVersion": "nextmajorsaas"
+}

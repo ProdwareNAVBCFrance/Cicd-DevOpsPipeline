@@ -1,0 +1,47 @@
+
+name: $(Build.BuildID) Project Management Al Validation
+
+jobs:
+- job: Build
+  timeoutInMinutes: 600
+  variables:
+    build.clean: all
+    platform: x64
+    skipComponentGovernanceDetection: True
+
+  steps:
+
+  # - task: PowerShell@2
+  #   displayName: 'Set BuildNumber'
+  #   inputs:
+  #     targetType: filePath
+  #     filePath: 'scripts\SetBuildNumber.ps1'
+  #     arguments: '-appRevision $(Build.BuildID)'
+
+  - task: PowerShell@2
+    displayName: 'Run AlValidation'
+    env:
+      bcinsidersasToken: '$(bcinsidersasToken)'
+      LicenseFile: '$(LicenseFile)'
+    inputs:
+      targetType: filePath
+      filePath: 'scripts\DevOps-AlValidation.ps1'
+      arguments: '-environment "AzureDevOps" -againstNextMajor $(validationAgainstNextMajor)'
+      failOnStderr: true
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
+    condition: and(succeeded(),ne(variables['TestResults'],''))
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: '$(testResults)'
+      failTaskOnFailedTests: true
+
+  - task: PowerShell@2
+    displayName: 'Cleanup'
+    condition: always()
+    inputs:
+      targetType: filePath
+      filePath: 'scripts\Cleanup.ps1'
+      arguments: '-environment "AzureDevOps"'
+      failOnStderr: false
