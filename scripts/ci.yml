@@ -1,0 +1,58 @@
+
+name: $(Build.BuildID) Project Management
+
+jobs:
+- job: Build
+  timeoutInMinutes: 300
+  variables:
+    build.clean: all
+    platform: x64
+    skipComponentGovernanceDetection: True
+    EnableAppSourceProcess: False
+
+  steps:
+  - checkout: self
+  - checkout: git://CORP-ISV-BC/Templ-DevOpsPipeline
+
+  - task: PowerShell@2
+    displayName: 'Set BuildNumber'
+    inputs:
+      targetType: filePath
+      filePath: 'scripts\SetBuildNumber.ps1'
+      arguments: '-appRevision $(Build.BuildID)'
+
+  - task: PowerShell@2
+    displayName: 'Run Pipeline'
+    env:
+      bcinsidersasToken: '$(bcinsidersasToken)'
+      LicenseFile: '$(LicenseFile)'
+      CodeSignCertPfxFile: '$(CodeSignPfxFile)'
+      CodeSignCertPfxPassword: '$(CodeSignPfxPassword)'
+    inputs:
+      targetType: filePath
+      filePath: 'scripts\DevOps-Pipeline.ps1'
+      arguments: '-environment "AzureDevOps" -version $(replacetargetversion) -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("$(EnableAppSourceProcess)" -eq "True")'
+      failOnStderr: true
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
+    condition: and(succeeded(),ne(variables['TestResults'],''))
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: '$(testResults)'
+      failTaskOnFailedTests: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifacts'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: output
+
+  - task: PowerShell@2
+    displayName: 'Cleanup'
+    condition: always()
+    inputs:
+      targetType: filePath
+      filePath: 'scripts\Cleanup.ps1'
+      arguments: '-environment "AzureDevOps"'
+      failOnStderr: false
