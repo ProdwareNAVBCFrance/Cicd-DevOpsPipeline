@@ -68,7 +68,8 @@ Run-AlPipeline @params `
     -testResultsFile $testResultsFile `
     -testResultsFormat 'JUnit' `
     -installTestFramework:$installTestFramework `
-    -installTestLibraries:$installTestLibraries `
+    -installTestLibraries:$installTestFramework `
+    -installTestRunner:$installTestFramework `
     -installPerformanceToolkit:$installPerformanceToolkit `
     -enableCodeCop:$enableCodeCop `
     -enableAppSourceCop:$enableAppSourceCop `

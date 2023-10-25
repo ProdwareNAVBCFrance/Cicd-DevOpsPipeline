@@ -8,7 +8,6 @@
     "testFolders": "test",
     "enableTaskScheduler": false,    
     "installTestFramework": true,
-    "installTestLibraries": true,
     "installPerformanceToolkit": false,
     "doNotSignApps": false,
     "enableCodeCop": true,

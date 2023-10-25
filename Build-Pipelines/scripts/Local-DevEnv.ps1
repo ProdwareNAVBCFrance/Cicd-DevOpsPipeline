@@ -40,7 +40,8 @@ Run-AlPipeline `
     -testResultsFile $testResultsFile `
     -testResultsFormat 'JUnit' `
     -installTestFramework:$installTestFramework `
-    -installTestLibraries:$installTestLibraries `
+    -installTestLibraries:$installTestFramework `
+    -installTestRunner:$installTestFramework `
     -installPerformanceToolkit:$installPerformanceToolkit `
     -credential $credential `
     -doNotRunTests `
