@@ -39,7 +39,7 @@ steps:
   condition: and(succeeded(),ne(variables['TestResults'],''))
   inputs:
     testResultsFormat: JUnit
-    testResultsFiles: '$(testResults)'
+    testResultsFiles: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\$(testResults)'
     failTaskOnFailedTests: true
 
 - task: PublishBuildArtifacts@1
