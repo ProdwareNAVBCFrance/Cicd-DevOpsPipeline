@@ -31,12 +31,12 @@
         },
         {
             "version": "nextmajorsaas",
-            "artifact": "///base/NextMajor/{INSIDERSASTOKEN}",
+            "artifact": "///base/NextMajor/",
             "cacheImage": true
         },
         {
             "version": "nextminorsaas",
-            "artifact": "///base/NextMinor/{INSIDERSASTOKEN}",
+            "artifact": "///base/NextMinor/",
             "cacheImage": true
         },
         {
