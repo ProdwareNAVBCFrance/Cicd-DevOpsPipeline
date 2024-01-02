@@ -10,7 +10,6 @@ Param(
 . (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $ENV:replacetargetversion
 . (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
 
-$insiderSasToken = "$ENV:bcinsidersasToken"
 $licenseFile = "$ENV:LicenseFile"
 
 # $allTestResults = "testresults*.xml"
@@ -29,7 +28,6 @@ switch ($againstNextMajor) {
                  -licenseFile $LicenseFile `
                  -memoryLimit 24G `
                  -previousApps $previousApps `
-                 -sasToken $insiderSasToken `
                  -failOnError `
                  -validateNextMajor
       }
@@ -42,7 +40,6 @@ switch ($againstNextMajor) {
                 -licenseFile $LicenseFile `
                 -memoryLimit 24G `
                 -previousApps $previousApps `
-                -sasToken $insiderSasToken `
                 -failOnError `
                 -validateCurrent `
                 -validateVersion $appRequiredBCVersion

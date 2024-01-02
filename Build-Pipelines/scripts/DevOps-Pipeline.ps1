@@ -29,7 +29,6 @@ if (!$AppSourceProcess) {
 }
 
 $params = @{}
-$insiderSasToken = "$ENV:bcinsidersasToken"
 $licenseFile = "$ENV:LicenseFile"
 $codeSigncertPfxFile = "$ENV:CodeSignCertPfxFile"
 if (!$doNotSignApps -and $codeSigncertPfxFile) {
@@ -56,7 +55,8 @@ Run-AlPipeline @params `
     -pipelinename $pipelineName `
     -containerName $containerName `
     -imageName $imageName `
-    -artifact $artifact.replace('{INSIDERSASTOKEN}',$insiderSasToken) `
+    -artifact $artifact `
+    -accept_insiderEula `
     -memoryLimit $memoryLimit `
     -baseFolder $baseFolder `
     -licenseFile $LicenseFile `

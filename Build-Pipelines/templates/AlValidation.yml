@@ -21,7 +21,6 @@ jobs:
   - task: PowerShell@2
     displayName: 'Run AlValidation'
     env:
-      bcinsidersasToken: '$(bcinsidersasToken)'
       LicenseFile: '$(LicenseFile)'
     inputs:
       targetType: filePath

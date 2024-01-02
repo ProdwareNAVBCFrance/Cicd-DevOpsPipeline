@@ -20,7 +20,6 @@ Get-AzKeyVaultSecret -VaultName $vaultNameForLocal | ForEach-Object {
     Set-Variable -Name "$($_.Name)Secret" -Value (Get-AzKeyVaultSecret -VaultName $vaultNameForLocal -Name $_.Name -WarningAction SilentlyContinue)
 }
 $licenseFile = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($LicenseFileSecret.SecretValue))
-$insiderSasToken = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($bcinsidersasTokenSecret.SecretValue))
 $credential = New-Object pscredential 'admin', $passwordSecret.SecretValue
 
 $allTestResults = "testresults*.xml"
@@ -34,7 +33,8 @@ Run-AlPipeline `
     -pipelineName $pipelineName `
     -containerName $containerName `
     -imageName $imageName `
-    -artifact $artifact.replace('{INSIDERSASTOKEN}',$insiderSasToken) `
+    -artifact $artifact `
+    -accept_insiderEula `
     -memoryLimit $memoryLimit `
     -baseFolder $baseFolder `
     -licenseFile $licenseFile `

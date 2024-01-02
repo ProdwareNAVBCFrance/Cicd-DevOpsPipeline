@@ -24,7 +24,6 @@ steps:
 - task: PowerShell@2
   displayName: 'Run Pipeline'
   env:
-    bcinsidersasToken: '$(bcinsidersasToken)'
     LicenseFile: '$(LicenseFile)'
     CodeSignCertPfxFile: '$(CodeSignPfxFile)'
     CodeSignCertPfxPassword: '$(CodeSignPfxPassword)'
