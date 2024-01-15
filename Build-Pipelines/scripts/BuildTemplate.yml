@@ -5,24 +5,20 @@ parameters:
   default: false
 
 steps:
-- task: SSMSigningToolsSetup@1
-  condition: succeeded()
-  env:
-    SM_HOST: '$(digicertHost)'
-    SM_API_KEY: '$(digicertApiToken)'
-    SM_CLIENT_CERT_PASSWORD: '$(digicertCertificateSha256Pwd)'
-    SM_CLIENT_CERT_FILE: '$(digicertIsvBcSha256Certificate)' 
+- checkout: self
+- checkout: Shared
 
+- task: SSMSigningToolsSetup@1
 - task: SSMClientToolsSetup@1
-  condition: succeeded()
+
+- task: CmdLine@2
+  inputs:
+    script: 'smctl certificate download --keypair-alias=FLTest-1 --name=KeyCert.pem --out=<Agent.TempDirectory>'
   env:
     SM_HOST: '$(digicertHost)'
     SM_API_KEY: '$(digicertApiToken)'
     SM_CLIENT_CERT_PASSWORD: '$(digicertCertificateSha256Pwd)'
     SM_CLIENT_CERT_FILE: '$(digicertIsvBcSha256Certificate)'
-
-- checkout: self
-- checkout: Shared
 
 - task: PowerShell@2
   displayName: 'Obtaining scripts'
