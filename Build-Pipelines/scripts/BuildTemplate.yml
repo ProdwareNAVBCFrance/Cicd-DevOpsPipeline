@@ -41,9 +41,19 @@ steps:
 
 - task: SSMClientToolsSetup@1
   condition: succeeded()
+  env:
+    SM_HOST: '$(digicertHost)'
+    SM_API_KEY: '$(digicertApiToken)'
+    SM_CLIENT_CERT_PASSWORD: '$(digicertCertificateSha256Pwd)'
+    SM_CLIENT_CERT_FILE: '$(digicertIsvBcSha256Certificate)'
 
 - task: SSMSigningToolsSetup@1
   condition: succeeded()
+  env:
+    SM_HOST: '$(digicertHost)'
+    SM_API_KEY: '$(digicertApiToken)'
+    SM_CLIENT_CERT_PASSWORD: '$(digicertCertificateSha256Pwd)'
+    SM_CLIENT_CERT_FILE: '$(digicertIsvBcSha256Certificate)'  
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifacts'
