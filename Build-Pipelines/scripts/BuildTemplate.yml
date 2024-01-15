@@ -39,6 +39,12 @@ steps:
     testResultsFiles: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\$(testResults)'
     failTaskOnFailedTests: true
 
+- task: SSMClientToolsSetup@1
+  condition: succeeded()
+
+- task: SSMSigningToolsSetup@1
+  condition: succeeded()
+
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifacts'
   inputs:
