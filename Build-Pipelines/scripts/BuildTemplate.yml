@@ -9,7 +9,7 @@ steps:
 - checkout: Shared
 
 - task: PowerShell@2
-  displayName: 'Obtaining scripts'
+  displayName: 'Copy Pipeline scripts to App Repo'
   inputs:
     targetType: 'inline'
     script: Copy-Item '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts' -Destination '$(Build.Repository.LocalPath)\$(Build.Repository.Name)' -Recurse -Force
