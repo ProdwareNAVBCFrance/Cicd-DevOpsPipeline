@@ -45,11 +45,11 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: output
 
-- task: PowerShell@2
-  displayName: 'Cleanup'
-  condition: always()
-  inputs:
-    targetType: filePath
-    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\Cleanup.ps1'
-    arguments: '-environment "AzureDevOps"'
-    failOnStderr: false
+# - task: PowerShell@2
+#   displayName: 'Cleanup'
+#   condition: always()
+#   inputs:
+#     targetType: filePath
+#     filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\Cleanup.ps1'
+#     arguments: '-environment "AzureDevOps"'
+#     failOnStderr: false
