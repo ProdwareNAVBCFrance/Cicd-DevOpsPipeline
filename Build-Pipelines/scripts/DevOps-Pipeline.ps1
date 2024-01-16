@@ -89,6 +89,7 @@ Run-AlPipeline @params `
     -CreateRuntimePackages:$CreateRuntimePackages `
     -appBuild $appBuild -appRevision $appRevision `
     -enableTaskScheduler:$enableTaskScheduler `
+    -keepContainer `
     -NewBcContainer {
         Param([Hashtable]$parameters)
         $parameters += @{ "dns" = "8.8.8.8" }
