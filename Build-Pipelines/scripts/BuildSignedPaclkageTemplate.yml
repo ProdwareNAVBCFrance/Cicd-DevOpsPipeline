@@ -28,7 +28,7 @@ steps:
   inputs:
     targetType: filePath
     filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-SignedPackagePipeline.ps1'
-    arguments: '-environment "AzureDevOps" -version $(replacetargetversion) -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
+    arguments: '-version $(replacetargetversion) -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
     failOnStderr: true
 
 - task: PublishBuildArtifacts@1
