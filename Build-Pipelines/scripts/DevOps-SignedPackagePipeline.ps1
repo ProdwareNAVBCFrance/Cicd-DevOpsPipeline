@@ -28,7 +28,10 @@ Run-AlPipeline @params `
     -baseFolder $baseFolder `
     -licenseFile $LicenseFile `
     -installApps $installApps `
+    -previousApps $previousApps `
     -appFolders $appFolders `
+    -doNotRunTests `
+    -installTestLibraries:$installTestFramework `
     -enableCodeCop:$enableCodeCop `
     -enableAppSourceCop:$enableAppSourceCop `
     -enablePerTenantExtensionCop:$enablePerTenantExtensionCop `
