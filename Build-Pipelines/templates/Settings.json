@@ -9,7 +9,6 @@
     "enableTaskScheduler": false,    
     "installTestFramework": true,
     "installPerformanceToolkit": false,
-    "doNotSignApps": false,
     "enableCodeCop": true,
     "enableAppSourceCop": true,
     "enablePerTenantExtensionCop": false,

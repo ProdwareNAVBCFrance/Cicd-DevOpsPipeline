@@ -9,7 +9,7 @@ steps:
 - checkout: Shared
 
 - task: PowerShell@2
-  displayName: 'Copy Pipeline scripts to App Repo'
+  displayName: 'Prepare scripts for App Repo'
   inputs:
     targetType: 'inline'
     script: Copy-Item '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts' -Destination '$(Build.Repository.LocalPath)\$(Build.Repository.Name)' -Recurse -Force
@@ -45,11 +45,11 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: output
 
-# - task: PowerShell@2
-#   displayName: 'Cleanup'
-#   condition: always()
-#   inputs:
-#     targetType: filePath
-#     filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\Cleanup.ps1'
-#     arguments: '-environment "AzureDevOps"'
-#     failOnStderr: false
+- task: PowerShell@2
+  displayName: 'Cleanup'
+  condition: always()
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\Cleanup.ps1'
+    arguments: '-environment "AzureDevOps"'
+    failOnStderr: false
