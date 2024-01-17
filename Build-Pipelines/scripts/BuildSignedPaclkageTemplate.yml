@@ -34,10 +34,10 @@ steps:
 - task: PowerShell@2
   displayName: 'Sign Apps'
   env:
-    SM_CLIENT_CERT_PASSWORD: '$(SM_CLIENT_CERT_PASSWORD)'
-    SM_CLIENT_CERT_FILE: '$(SM_CLIENT_CERT_FILE)'
-    SM_HOST: '$(SM_HOST)'
-    SM_API_KEY: '$(SM_API_KEY)'
+    SM_CLIENT_CERT_PASSWORD: '$(digicertCertificateSha256Pwd)'
+    SM_CLIENT_CERT_FILE: '$(digicertIsvBcSha256Certificate)'
+    SM_HOST: '$(digicertHost)'
+    SM_API_KEY: '$(digicertApiToken)'
   inputs:
     targetType: filePath
     filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-SignApps.ps1'
