@@ -30,8 +30,10 @@ Run-AlPipeline @params `
     -installApps $installApps `
     -previousApps $previousApps `
     -appFolders $appFolders `
+    -testFolders $testFolders `
+    -installTestLibraries `
+    -installTestFramework `
     -doNotRunTests `
-    -installTestLibraries:$installTestFramework `
     -enableCodeCop:$enableCodeCop `
     -enableAppSourceCop:$enableAppSourceCop `
     -enablePerTenantExtensionCop:$enablePerTenantExtensionCop `
