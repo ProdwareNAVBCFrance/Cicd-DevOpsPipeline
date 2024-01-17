@@ -4,7 +4,7 @@
     [string] $environment = 'AzureDevOps'
 )
 
-$appFilesToSign = '$ENV:BUILD_ARTIFACTSTAGINGDIRECTORY\Apps\*.app'
+$appFilesToSign = "$ENV:BUILD_ARTIFACTSTAGINGDIRECTORY\Apps\*.app"
 Get-ChildItem -Path $appFilesToSign | Format-List -Property * -Force   # see all members
 
 Write-Host $ENV:SM_CLIENT_CERT_PASSWORD
