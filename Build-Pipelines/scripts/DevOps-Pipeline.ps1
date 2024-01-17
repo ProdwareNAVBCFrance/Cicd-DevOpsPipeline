@@ -30,19 +30,21 @@ if (!$AppSourceProcess) {
 
 $params = @{}
 $licenseFile = "$ENV:LicenseFile"
-$codeSigncertPfxFile = "$ENV:CodeSignCertPfxFile"
-if (!$doNotSignApps -and $codeSigncertPfxFile) {
-    if ("$ENV:CodeSignCertPfxPassword" -ne "") {
-        $codeSignCertPfxPassword = try { "$ENV:CodeSignCertPfxPassword" | ConvertTo-SecureString } catch { ConvertTo-SecureString -String "$ENV:CodeSignCertPfxPassword" -AsPlainText -Force }
-        $params = @{
-            "codeSignCertPfxFile" = $codeSignCertPfxFile
-            "codeSignCertPfxPassword" = $codeSignCertPfxPassword
-        }
-    }
-    else {
-        $codeSignCertPfxPassword = $null
-    }
-}
+
+
+# $codeSigncertPfxFile = "$ENV:CodeSignCertPfxFile"
+# if (!$doNotSignApps -and $codeSigncertPfxFile) {
+#     if ("$ENV:CodeSignCertPfxPassword" -ne "") {
+#         $codeSignCertPfxPassword = try { "$ENV:CodeSignCertPfxPassword" | ConvertTo-SecureString } catch { ConvertTo-SecureString -String "$ENV:CodeSignCertPfxPassword" -AsPlainText -Force }
+#         $params = @{
+#             "codeSignCertPfxFile" = $codeSignCertPfxFile
+#             "codeSignCertPfxPassword" = $codeSignCertPfxPassword
+#         }
+#     }
+#     else {
+#         $codeSignCertPfxPassword = $null
+#     }
+# }
 
 $allTestResults = "testresults*.xml"
 $testResultsFile = Join-Path $baseFolder "TestResults.xml"
