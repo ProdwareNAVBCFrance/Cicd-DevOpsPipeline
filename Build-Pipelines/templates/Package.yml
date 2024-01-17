@@ -1,4 +1,4 @@
-name: $(Signed-Build.BuildID)
+name: Signed-$(Build.BuildID)
 
 resources:
   repositories:

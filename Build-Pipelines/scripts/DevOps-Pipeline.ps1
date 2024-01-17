@@ -11,9 +11,7 @@
     [Parameter(Mandatory=$false)]
     [switch] $AppSourceProcess,
     [Parameter(Mandatory=$false)]
-    [switch] $DoNotRunTestsOverride,
-    [Parameter(Mandatory=$false)]
-    [switch] $KeepContainerOverride
+    [switch] $PackageRelease
 )
 
 if ($environment -eq "AzureDevOps") {
@@ -28,8 +26,8 @@ $baseFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
 . (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $ENV:replacetargetversion
 . (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
 
-if ($DoNotRunTestsOverride) {
-    $doNotRunTests = $DoNotRunTestsOverride
+if ($PackageRelease) {
+    $doNotRunTests = $PackageRelease
 }
 
 if (!$AppSourceProcess) {
@@ -97,7 +95,8 @@ Run-AlPipeline @params `
     -CreateRuntimePackages:$CreateRuntimePackages `
     -appBuild $appBuild -appRevision $appRevision `
     -enableTaskScheduler:$enableTaskScheduler `
-    -keepContainer:$KeepContainerOverride `
+    -keepContainer:$PackageRelease `
+    -generateDependencyArtifact:$PackageRelease `
     -NewBcContainer {
         Param([Hashtable]$parameters)
         $parameters += @{ "dns" = "8.8.8.8" }
