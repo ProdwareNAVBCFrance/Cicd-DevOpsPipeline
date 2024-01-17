@@ -35,7 +35,7 @@ Run-AlPipeline @params `
     -enableUICop:$enableUICop `
     -rulesetFile $rulesetFile `
     -useDefaultAppSourceRuleSet:$useDefaultAppSourceRuleSet `
-    -azureDevOps
+    -azureDevOps `
     -AppSourceCopMandatoryAffixes $appSourceCopMandatoryAffixes `
     -AppSourceCopSupportedCountries $appSourceCopSupportedCountries `
     -buildArtifactFolder $buildArtifactFolder `
