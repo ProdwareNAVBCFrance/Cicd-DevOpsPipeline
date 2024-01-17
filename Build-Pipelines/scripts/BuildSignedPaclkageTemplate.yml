@@ -28,7 +28,20 @@ steps:
   inputs:
     targetType: filePath
     filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-Pipeline.ps1'
-    arguments: '-PackageRelease -version $(replacetargetversion) -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
+    arguments: '-environment "AzureDevOps" -PackageRelease -version $(replacetargetversion) -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
+    failOnStderr: true
+
+- task: PowerShell@2
+  displayName: 'Sign Apps'
+  env:
+    SM_CLIENT_CERT_PASSWORD: '$(SM_CLIENT_CERT_PASSWORD)'
+    SM_CLIENT_CERT_FILE: '$(SM_CLIENT_CERT_FILE)'
+    SM_HOST: '$(SM_HOST)'
+    SM_API_KEY: '$(SM_API_KEY)'
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-SignApps.ps1'
+    arguments: '-environment "AzureDevOps"'
     failOnStderr: true
 
 - task: PublishBuildArtifacts@1
