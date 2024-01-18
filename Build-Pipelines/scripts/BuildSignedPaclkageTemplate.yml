@@ -1,0 +1,70 @@
+
+parameters:
+- name: EnableAppSourceProcess
+  type: boolean
+  default: false
+
+steps:
+- checkout: self
+- checkout: Shared
+
+- task: PowerShell@2
+  displayName: 'Prepare scripts for App Repo'
+  inputs:
+    targetType: 'inline'
+    script: Copy-Item '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts' -Destination '$(Build.Repository.LocalPath)\$(Build.Repository.Name)' -Recurse -Force
+
+- task: PowerShell@2
+  displayName: 'Set BuildNumber'
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\SetBuildNumber.ps1'
+    arguments: '-appRevision $(Build.BuildID)'
+
+- task: PowerShell@2
+  displayName: 'Run Pipeline'
+  env:
+    LicenseFile: '$(LicenseFile)'
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-Pipeline.ps1'
+    arguments: '-environment "AzureDevOps" -PackageRelease -version $(replacetargetversion) -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
+    failOnStderr: true
+
+- task: PowerShell@2
+  displayName: 'Sign Apps'
+  env:
+    SM_CLIENT_CERT_PASSWORD: '$(digicertCertificateSha256Pwd)'
+    SM_HOST: '$(digicertHost)'
+    SM_API_KEY: '$(digicertApiToken)'
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-SignApps.ps1'
+    arguments: '-environment "AzureDevOps"'
+    failOnStderr: true
+
+    # SM_CLIENT_CERT_FILE: '$(digicertIsvBcSha256Certificate)'
+    
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: output
+
+- task: PowerShell@2
+  displayName: 'Remove BC container'
+  condition: always()
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-RemoveBcContainer.ps1'
+    arguments: '-environment "AzureDevOps"'
+    failOnStderr: false
+
+- task: PowerShell@2
+  displayName: 'Cleanup'
+  condition: always()
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\Cleanup.ps1'
+    arguments: '-environment "AzureDevOps"'
+    failOnStderr: false

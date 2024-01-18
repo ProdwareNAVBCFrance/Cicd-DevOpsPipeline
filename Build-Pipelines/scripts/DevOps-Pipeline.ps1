@@ -9,7 +9,9 @@
     [Parameter(Mandatory=$false)]
     [int] $appRevision = 0,
     [Parameter(Mandatory=$false)]
-    [switch] $AppSourceProcess
+    [switch] $AppSourceProcess,
+    [Parameter(Mandatory=$false)]
+    [switch] $PackageRelease
 )
 
 if ($environment -eq "AzureDevOps") {
@@ -23,6 +25,11 @@ elseif ($environment -eq "GitHubActions") {
 $baseFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
 . (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $ENV:replacetargetversion
 . (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
+
+if ($PackageRelease) {
+    $doNotRunTests = $PackageRelease
+    $CreateRuntimePackages = $PackageRelease
+}
 
 if (!$AppSourceProcess) {
     $additionalCountries = ""
@@ -89,6 +96,8 @@ Run-AlPipeline @params `
     -CreateRuntimePackages:$CreateRuntimePackages `
     -appBuild $appBuild -appRevision $appRevision `
     -enableTaskScheduler:$enableTaskScheduler `
+    -keepContainer:$PackageRelease `
+    -generateDependencyArtifact:$PackageRelease `
     -NewBcContainer {
         Param([Hashtable]$parameters)
         $parameters += @{ "dns" = "8.8.8.8" }
