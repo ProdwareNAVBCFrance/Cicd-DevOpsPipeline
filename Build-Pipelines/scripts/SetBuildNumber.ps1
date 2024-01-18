@@ -10,4 +10,4 @@ Write-Host "Set appBuild = $appBuild"
 Write-Host "##vso[task.setvariable variable=appBuild]$appBuild"
 
 $appVersion = $settings.appVersion
-Write-Host "##vso[build.updatebuildnumber]$(ENV:BUILD_DEFINITIONNAME)_$(ENV:SOURCEBRANCHNAME)_$appversion.$appBuild.$appRevision"
+Write-Host "##vso[build.updatebuildnumber]$ENV:BUILD_DEFINITIONNAME_$ENV:SOURCEBRANCHNAME_$appversion.$appBuild.$appRevision"
