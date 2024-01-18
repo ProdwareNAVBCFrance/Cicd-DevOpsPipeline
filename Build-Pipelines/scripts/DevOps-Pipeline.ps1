@@ -28,6 +28,7 @@ $baseFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
 
 if ($PackageRelease) {
     $doNotRunTests = $PackageRelease
+    $CreateRuntimePackages = $PackageRelease
 }
 
 if (!$AppSourceProcess) {

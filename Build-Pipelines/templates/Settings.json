@@ -26,23 +26,25 @@
             "version": "currentsaas",
             "artifact": "///base/Current",
             "cacheImage": true,
-            "CreateRuntimePackages": true
+            "CreateRuntimePackages": false    
         },
         {
             "version": "nextmajorsaas",
             "artifact": "///base/NextMajor/",
-            "cacheImage": true
+            "cacheImage": true,
+            "CreateRuntimePackages": false
         },
         {
             "version": "nextminorsaas",
             "artifact": "///base/NextMinor/",
-            "cacheImage": true
+            "cacheImage": true,
+            "CreateRuntimePackages": false
         },
         {
             "version": "ci",
             "artifact": "//23.0.12034.12676/base/Closest",
             "cacheImage": true,
-            "CreateRuntimePackages": true
+            "CreateRuntimePackages": false
         }
     ],
     "appVersion": "23.0",
