@@ -35,7 +35,6 @@ steps:
   displayName: 'Sign Apps'
   env:
     SM_CLIENT_CERT_PASSWORD: '$(digicertCertificateSha256Pwd)'
-    SM_CLIENT_CERT_FILE: '$(digicertIsvBcSha256Certificate)'
     SM_HOST: '$(digicertHost)'
     SM_API_KEY: '$(digicertApiToken)'
   inputs:
@@ -44,6 +43,8 @@ steps:
     arguments: '-environment "AzureDevOps"'
     failOnStderr: true
 
+    # SM_CLIENT_CERT_FILE: '$(digicertIsvBcSha256Certificate)'
+    
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifacts'
   inputs:
