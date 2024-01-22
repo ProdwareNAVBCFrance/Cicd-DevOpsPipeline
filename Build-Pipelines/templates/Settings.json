@@ -42,7 +42,7 @@
         },
         {
             "version": "ci",
-            "artifact": "//23.0.12034.12676/base/Closest",
+            "artifact": "//23.3.14876.15103/base/Closest",
             "cacheImage": true,
             "CreateRuntimePackages": false
         }
@@ -50,5 +50,5 @@
     "appVersion": "23.0",
     "appRequiredBCVersion": "23.0",
     "appBuild": "yyMM",
-    "targetVersion": "nextmajorsaas"
+    "targetVersion": "ci"
 }
