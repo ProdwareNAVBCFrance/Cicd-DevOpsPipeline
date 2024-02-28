@@ -1,0 +1,22 @@
+name: $(Build.BuildID)
+
+resources:
+  repositories:
+  - repository: Shared
+    name: CORP-ISV-BC/Cicd-DevOpsPipeline
+    type: git
+    ref: master #branch name
+
+jobs:
+- job: Build
+  timeoutInMinutes: 300
+  variables:
+    build.clean: all
+    platform: x64
+    skipComponentGovernanceDetection: True
+    EnableAppSourceProcess: False
+
+  steps:
+  - template: Build-Pipelines\scripts\CheckNextVersionCompatibility.yml@Shared
+    parameters:
+      EnableAppSourceProcess: False
