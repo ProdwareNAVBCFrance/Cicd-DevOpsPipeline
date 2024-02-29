@@ -21,15 +21,15 @@ steps:
     filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\SetBuildNumber.ps1'
     arguments: '-appRevision $(Build.BuildID)'
 
-- task: PowerShell@2
-  displayName: 'Run Pipeline - Next Minor Version'
-  env:
-    LicenseFile: '$(LicenseFile)'
-  inputs:
-    targetType: filePath
-    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-Pipeline.ps1'
-    arguments: '-environment "AzureDevOps" -version nextminorsaas -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
-    failOnStderr: true
+# - task: PowerShell@2
+#   displayName: 'Run Pipeline - Next Minor Version'
+#   env:
+#     LicenseFile: '$(LicenseFile)'
+#   inputs:
+#     targetType: filePath
+#     filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-Pipeline.ps1'
+#     arguments: '-environment "AzureDevOps" -version nextminorsaas -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
+#     failOnStderr: true
 
 - task: PowerShell@2
   displayName: 'Run Pipeline - Next Major Version'
