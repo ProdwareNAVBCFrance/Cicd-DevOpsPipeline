@@ -27,10 +27,6 @@ $baseFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
 . (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $version
 . (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
 
-if ($version -eq "nextmajorsaas") {
-    $previousApps = ""
-}
-
 if ($PackageRelease) {
     $doNotRunTests = $PackageRelease
     $CreateRuntimePackages = $PackageRelease
@@ -39,6 +35,14 @@ if ($PackageRelease) {
 if (!$AppSourceProcess) {
     $additionalCountries = ""
 }
+
+# Disable previous version and test apps for nextmajorsaas
+# Temporary solution until we have a better way to handle this
+# if ($version -eq "nextmajorsaas") {
+#     $previousApps = ""
+#     $testFolders = ""
+#     $doNotRunTests = $true
+# }
 
 $params = @{}
 $licenseFile = "$ENV:LicenseFile"

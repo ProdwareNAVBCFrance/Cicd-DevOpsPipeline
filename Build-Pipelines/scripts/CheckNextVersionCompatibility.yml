@@ -22,7 +22,7 @@ steps:
     arguments: '-appRevision $(Build.BuildID)'
 
 - task: PowerShell@2
-  displayName: 'Run Pipeline - Next Minor Version'
+  displayName: 'Check Next Minor Version'
   env:
     LicenseFile: '$(LicenseFile)'
   inputs:
@@ -31,8 +31,16 @@ steps:
     arguments: '-environment "AzureDevOps" -version nextminorsaas -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
     failOnStderr: true
 
+- task: PublishTestResults@2
+  displayName: 'Publish Next Minor Test Results'
+  condition: and(succeeded(),ne(variables['TestResults'],''))
+  inputs:
+    testResultsFormat: JUnit
+    testResultsFiles: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\$(testResults)'
+    failTaskOnFailedTests: true
+
 - task: PowerShell@2
-  displayName: 'Run Pipeline - Next Major Version'
+  displayName: 'Check Next Major Version'
   env:
     LicenseFile: '$(LicenseFile)'
   inputs:
@@ -42,18 +50,12 @@ steps:
     failOnStderr: true
 
 - task: PublishTestResults@2
-  displayName: 'Publish Test Results'
+  displayName: 'Publish Next Major Test Results'
   condition: and(succeeded(),ne(variables['TestResults'],''))
   inputs:
     testResultsFormat: JUnit
     testResultsFiles: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\$(testResults)'
     failTaskOnFailedTests: true
-
-# - task: PublishBuildArtifacts@1
-#   displayName: 'Publish Artifacts'
-#   inputs:
-#     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#     ArtifactName: output
 
 - task: PowerShell@2
   displayName: 'Cleanup'
