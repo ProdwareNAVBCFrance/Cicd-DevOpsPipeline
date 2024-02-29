@@ -79,6 +79,7 @@ Run-AlPipeline @params `
     -appFolders $appFolders `
     -testFolders $testFolders `
     -doNotRunTests:$doNotRunTests `
+    -RunTestsInBcContainer `
     -testResultsFile $testResultsFile `
     -testResultsFormat 'JUnit' `
     -installTestFramework:$installTestFramework `
