@@ -38,11 +38,11 @@ if (!$AppSourceProcess) {
 
 # Disable previous version and test apps for nextmajorsaas
 # Temporary solution until we have a better way to handle this
-if ($version -eq "nextmajorsaas") {
-    $previousApps = ""
-    $testFolders = ""
-    $doNotRunTests = $true
-}
+# if ($version -eq "nextmajorsaas") {
+#     $previousApps = ""
+#     $testFolders = ""
+#     $doNotRunTests = $true
+# }
 
 $params = @{}
 $licenseFile = "$ENV:LicenseFile"
