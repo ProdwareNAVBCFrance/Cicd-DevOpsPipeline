@@ -31,6 +31,14 @@ steps:
     arguments: '-environment "AzureDevOps" -version nextminorsaas -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
     failOnStderr: true
 
+- task: PublishTestResults@2
+  displayName: 'Publish Next Minor Test Results'
+  condition: and(succeeded(),ne(variables['TestResults'],''))
+  inputs:
+    testResultsFormat: JUnit
+    testResultsFiles: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\$(testResults)'
+    failTaskOnFailedTests: true
+
 - task: PowerShell@2
   displayName: 'Check Next Major Version'
   env:
@@ -42,7 +50,7 @@ steps:
     failOnStderr: true
 
 - task: PublishTestResults@2
-  displayName: 'Publish Test Results'
+  displayName: 'Publish Next Major Test Results'
   condition: and(succeeded(),ne(variables['TestResults'],''))
   inputs:
     testResultsFormat: JUnit
