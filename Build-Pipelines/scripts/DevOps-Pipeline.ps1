@@ -105,7 +105,7 @@ Run-AlPipeline @params `
     -CreateRuntimePackages:$CreateRuntimePackages `
     -appBuild $appBuild -appRevision $appRevision `
     -enableTaskScheduler:$enableTaskScheduler `
-    -keepContainer:$PackageRelease `
+    -keepContainer:$false `
     -generateDependencyArtifact:$PackageRelease `
     -NewBcContainer {
         Param([Hashtable]$parameters)
