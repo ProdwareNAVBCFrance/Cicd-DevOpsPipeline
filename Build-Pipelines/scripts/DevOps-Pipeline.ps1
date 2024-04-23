@@ -25,7 +25,8 @@ elseif ($environment -eq "GitHubActions") {
 $baseFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
 # . (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $ENV:replacetargetversion
 . (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $version
-. (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
+#TEMP: Temporarilly remove BCcontainerhelper update
+#. (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
 
 if ($PackageRelease) {
     $doNotRunTests = $PackageRelease
