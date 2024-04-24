@@ -1,7 +1,5 @@
-# Exact copy of Build-Pipelines\scripts\Read-Settings.ps1 to be used on local machines
-
 Param(
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [ValidateSet('Local', 'AzureDevOps', 'GithubActions', 'GitLab')]
     [string] $environment = 'Local',
     [string] $version = ""
@@ -13,7 +11,7 @@ if ($environment -ne 'Local') {
 }
 
 $settings = (Get-Content (Join-Path $PSScriptRoot "settings.json") | ConvertFrom-Json)
-if ("$version" -eq "")  {
+if ("$version" -eq "") {
     $version = $settings.versions[0].version
     Write-Host "Version not defined, using $version"
 }
@@ -26,24 +24,28 @@ $buildversion = $settings.versions | Where-Object { $_.version -eq $version }
 if ($buildversion) {
     Write-Host "Set artifact = $($buildVersion.artifact)"
     Set-Variable -Name "artifact" -Value $buildVersion.artifact
+    Write-Host "Set olderLicenseFile = $($buildVersion.olderLicenseFile)"
+    Set-Variable -Name "olderLicenseFile" -Value $buildVersion.olderLicenseFile    
 }
 else {
     throw "Unknown version: $version"
 }
 
-$pipelineName = "$($settings.Name)-$version"
+$pipelineName = "$($settings.Name)-$version-$env:username"
 Write-Host "Set pipelineName = $pipelineName"
 
-$containerName = "$($pipelineName.Replace('.','-') -replace '[^a-zA-Z0-9---]', '')".ToLowerInvariant()
-if ($containerName.Length -gt 15) {
-    $containerName = $containerName.Substring(0,15)
+if ($agentName) {
+    $containerName = "$($agentName -replace '[^a-zA-Z0-9---]', '')-$($pipelineName -replace '[^a-zA-Z0-9---]', '')".ToLowerInvariant()
+}
+else {
+    $containerName = "$($pipelineName.Replace('.','-') -replace '[^a-zA-Z0-9---]', '')".ToLowerInvariant()
 }
 Write-Host "Set containerName = $containerName"
 if ($environment -eq 'AzureDevOps') {
     Write-Host "##vso[task.setvariable variable=containerName]$containerName"
 }
 
-"installApps", "previousApps", "previewApps", "appSourceCopMandatoryAffixes", "appSourceCopSupportedCountries", "appFolders", "testFolders", "memoryLimit", "additionalCountries", "genericImageName", "vaultNameForLocal", "bcContainerHelperVersion", "rulesetFile", "appRequiredBCVersion" | ForEach-Object {
+"installApps", "previousApps", "previewApps", "appSourceCopMandatoryAffixes", "appSourceCopSupportedCountries", "appFolders", "testFolders", "memoryLimit", "additionalCountries", "genericImageName", "vaultNameForLocal", "bcContainerHelperVersion", "rulesetFile", "disabledTestsFile", "appRequiredBCVersion" | ForEach-Object {
     $str = ""
     if ($buildversion.PSObject.Properties.Name -eq $_) {
         $str = $buildversion."$_"
@@ -55,7 +57,7 @@ if ($environment -eq 'AzureDevOps') {
     Set-Variable -Name $_ -Value "$str"
 }
 
-"installTestFramework", "installPerformanceToolkit", "enableCodeCop", "enableAppSourceCop", "enablePerTenantExtensionCop", "enableUICop", "doNotRunTests", "cacheImage", "CreateRuntimePackages", "escapeFromCops", "useDefaultAppSourceRuleSet", "enableTaskScheduler" | ForEach-Object {
+"installTestFramework", "installTestLibraries", "installPerformanceToolkit", "enableCodeCop", "enableAppSourceCop", "enablePerTenantExtensionCop", "enableUICop", "doNotSignApps", "doNotRunTests", "cacheImage", "CreateRuntimePackages", "escapeFromCops", "useDefaultAppSourceRuleSet", "enableTaskScheduler" | ForEach-Object {
     $str = "False"
     if ($buildversion.PSObject.Properties.Name -eq $_) {
         $str = $buildversion."$_"

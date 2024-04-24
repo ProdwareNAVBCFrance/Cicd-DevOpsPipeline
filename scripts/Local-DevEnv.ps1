@@ -1,6 +1,6 @@
 ﻿Param(
-    [Parameter(Mandatory=$false)]
-    [string] $version = "ci"
+    [Parameter(Mandatory = $false)]
+    [string] $version = "cis"
 )
 
 $baseFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
@@ -15,7 +15,7 @@ Get-AzKeyVaultSecret -VaultName $vaultNameForLocal | ForEach-Object {
     Write-Host "Get Secret $($_.Name)Secret"
     Set-Variable -Name "$($_.Name)Secret" -Value (Get-AzKeyVaultSecret -VaultName $vaultNameForLocal -Name $_.Name -WarningAction SilentlyContinue)
 }
-$licenseFile = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($LicenseFileSecret.SecretValue))
+
 $credential = New-Object pscredential 'admin', $passwordSecret.SecretValue
 
 $allTestResults = "testresults*.xml"
@@ -40,8 +40,7 @@ Run-AlPipeline `
     -testResultsFile $testResultsFile `
     -testResultsFormat 'JUnit' `
     -installTestFramework:$installTestFramework `
-    -installTestLibraries:$installTestFramework `
-    -installTestRunner:$installTestFramework `
+    -installTestLibraries:$installTestLibraries `
     -installPerformanceToolkit:$installPerformanceToolkit `
     -credential $credential `
     -doNotRunTests `
@@ -61,12 +60,10 @@ Run-AlPipeline `
     -keepContainer `
     -enableTaskScheduler:$enableTaskScheduler `
     -NewBcContainer {
-        Param([Hashtable]$parameters)
-        $parameters += @{ "dns" = "8.8.8.8" }
-        New-BcContainer @parameters
-        Invoke-ScriptInBcContainer $parameters.ContainerName -scriptblock {
-            $progressPreference = 'SilentlyContinue'
-        }
+    Param([Hashtable]$parameters)
+    $parameters += @{ "dns" = "8.8.8.8" }
+    New-BcContainer @parameters
+    Invoke-ScriptInBcContainer $parameters.ContainerName -scriptblock {
+        $progressPreference = 'SilentlyContinue'
     }
-
-    .(Join-Path $PSScriptRoot "Local-DevEnv-AddTasks.ps1") -version $version
+}
