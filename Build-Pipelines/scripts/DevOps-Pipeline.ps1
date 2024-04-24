@@ -38,7 +38,7 @@ $testResultsFiles = Join-Path $baseFolder $allTestResults
 if (Test-Path $testResultsFiles) {
     Remove-Item $testResultsFiles -Force
 }
-$disabledTests = (Get-Content $disabledTestsFile | ConvertFrom-Json)
+#$disabledTests = (Get-Content $disabledTestsFile | ConvertFrom-Json)
 
 Run-AlPipeline @params `
     -pipelinename $pipelineName `
