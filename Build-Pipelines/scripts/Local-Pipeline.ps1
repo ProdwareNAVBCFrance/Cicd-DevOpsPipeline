@@ -22,13 +22,6 @@ Get-AzKeyVaultSecret -VaultName $vaultNameForLocal | ForEach-Object {
 $licenseFile = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($LicenseFileSecret.SecretValue))
 $credential = New-Object pscredential 'admin', $passwordSecret.SecretValue
 
-$allTestResults = "testresults*.xml"
-$testResultsFile = Join-Path $baseFolder "TestResults.xml"
-$testResultsFiles = Join-Path $baseFolder $allTestResults
-if (Test-Path $testResultsFiles) {
-    Remove-Item $testResultsFiles -Force
-}
-
 Run-AlPipeline `
     -pipelineName $pipelineName `
     -containerName $containerName `
@@ -57,7 +50,6 @@ Run-AlPipeline `
     -useDefaultAppSourceRuleSet:$useDefaultAppSourceRuleSet `
     -AppSourceCopMandatoryAffixes $appSourceCopMandatoryAffixes `
     -AppSourceCopSupportedCountries $appSourceCopSupportedCountries `
-    -additionalCountries $additionalCountries `
     -credential $credential `
     -appBuild $appBuild -appRevision $appRevision `
     -enableTaskScheduler:$enableTaskScheduler `

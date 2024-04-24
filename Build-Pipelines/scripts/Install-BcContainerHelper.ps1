@@ -10,7 +10,7 @@ if ($bccontainerHelperVersion -like "https://*") {
     $path = Join-Path $env:TEMP ([Guid]::NewGuid().ToString())
 }
 else {
-    $bcbaseurl = "https://bccontainerhelper.azureedge.net/public"
+    $bcbaseurl = "https://bccontainerhelper.blob.core.windows.net/public"
     $versionsxml = [xml](New-Object System.Net.WebClient).DownloadString("$($bcbaseurl)?comp=list&restype=container")
 
     $latestVersion = $versionsxml.EnumerationResults.ChildNodes.Blob.Name | Where-Object { $_ -ne "latest.zip" -and $_ -notlike "*preview*" } | ForEach-Object { $_.replace('.zip','') } | Sort-Object { [Version]$_ } | Select-Object -Last 1
