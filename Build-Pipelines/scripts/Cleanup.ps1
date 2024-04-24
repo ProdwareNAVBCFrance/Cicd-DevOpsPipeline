@@ -7,8 +7,6 @@
 . (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment
 
 if ("$AgentName" -ne "Hosted Agent" -and "$AgentName" -notlike "Azure Pipelines*") {
-    #TEMP: Temporarilly remove BCcontainerhelper update
-    #. (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion
 
     $cleanupMutexName = "Cleanup"
     $cleanupMutex = New-Object System.Threading.Mutex($false, $cleanupMutexName)

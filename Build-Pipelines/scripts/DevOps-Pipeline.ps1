@@ -26,19 +26,7 @@ elseif ($environment -eq "GitHubActions") {
 
 $baseFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
 . (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $ENV:replacetargetversion
-#. (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
-
-if (!$AppSourceProcess) {
-    $additionalCountries = ""
-}
-
-$allTestResults = "testresults*.xml"
-$testResultsFile = Join-Path $baseFolder "TestResults.xml"
-$testResultsFiles = Join-Path $baseFolder $allTestResults
-if (Test-Path $testResultsFiles) {
-    Remove-Item $testResultsFiles -Force
-}
-#$disabledTests = (Get-Content $disabledTestsFile | ConvertFrom-Json)
+. (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
 
 Run-AlPipeline @params `
     -pipelinename $pipelineName `
@@ -70,7 +58,6 @@ Run-AlPipeline @params `
     -gitHubActions:($environment -eq 'GitHubActions') `
     -AppSourceCopMandatoryAffixes $appSourceCopMandatoryAffixes `
     -AppSourceCopSupportedCountries $appSourceCopSupportedCountries `
-    -additionalCountries $additionalCountries `
     -buildArtifactFolder $buildArtifactFolder `
     -CreateRuntimePackages:$CreateRuntimePackages `
     -appBuild $appBuild -appRevision $appRevision `
@@ -84,13 +71,6 @@ Run-AlPipeline @params `
         }
     }
     
-    # `
-    # -RunTestsInBcContainer {
-    #     Param([Hashtable]$parameters)
-    #     $parameters += @{ "disabledTests" = $disabledTests }
-    #     Run-TestsInBcContainer @parameters
-    # }
-
 if ($environment -eq 'AzureDevOps') {
     Write-Host "##vso[task.setvariable variable=TestResults]$allTestResults"
 }
