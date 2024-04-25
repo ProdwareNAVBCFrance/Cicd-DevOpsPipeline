@@ -28,16 +28,12 @@ $baseFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
 . (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $ENV:replacetargetversion
 . (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
 
-if (!$AppSourceProcess) {
-    $additionalCountries = ""
-}
 $allTestResults = "testresults*.xml"
 $testResultsFile = Join-Path $baseFolder "TestResults.xml"
 $testResultsFiles = Join-Path $baseFolder $allTestResults
 if (Test-Path $testResultsFiles) {
     Remove-Item $testResultsFiles -Force
 }
-#$disabledTests = (Get-Content $disabledTestsFile | ConvertFrom-Json)
 
 Run-AlPipeline @params `
     -pipelinename $pipelineName `
