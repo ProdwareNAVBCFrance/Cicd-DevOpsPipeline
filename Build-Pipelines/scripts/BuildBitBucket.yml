@@ -18,7 +18,7 @@ steps:
   displayName: 'Set BuildNumber'
   inputs:
     targetType: filePath
-    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\SetBuildNumber.ps1'
+    filePath: '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)\scripts\SetBuildNumber.ps1'
     arguments: '-appRevision $(Build.BuildID)'
 
 - task: PowerShell@2
@@ -27,7 +27,7 @@ steps:
     LicenseFile: '$(LicenseFile)'
   inputs:
     targetType: filePath
-    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-Pipeline.ps1'
+    filePath: '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)\scripts\DevOps-Pipeline.ps1'
     arguments: '-environment "AzureDevOps" -version $(replacetargetversion) -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
     failOnStderr: true
 
@@ -36,7 +36,7 @@ steps:
   condition: and(succeeded(),ne(variables['TestResults'],''))
   inputs:
     testResultsFormat: JUnit
-    testResultsFiles: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\$(testResults)'
+    testResultsFiles: '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)\$(testResults)'
     failTaskOnFailedTests: true
 
 - task: PublishBuildArtifacts@1
@@ -50,6 +50,6 @@ steps:
   condition: always()
   inputs:
     targetType: filePath
-    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\Cleanup.ps1'
+    filePath: '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)\scripts\Cleanup.ps1'
     arguments: '-environment "AzureDevOps"'
     failOnStderr: false
