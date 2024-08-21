@@ -12,7 +12,7 @@ steps:
   displayName: 'Prepare scripts for App Repo'
   inputs:
     targetType: 'inline'
-    script: Copy-Item '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts' -Destination '$(Build.Repository.LocalPath)\$(Build.Repository.Name).Substing($(Build.Repository.Name).IndexOf("/") + 1)' -Recurse -Force
+    script: Copy-Item '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts' -Destination '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)' -Recurse -Force
 
 - task: PowerShell@2
   displayName: 'Set BuildNumber'
