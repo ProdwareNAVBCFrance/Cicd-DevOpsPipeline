@@ -1,0 +1,24 @@
+parameters:
+- name: EnableAppSourceProcess
+  type: boolean
+  default: false
+
+steps:
+- checkout: self
+- checkout: Shared
+
+- task: PowerShell@2
+  displayName: 'Prepare scripts for App Repo'
+  inputs:
+    targetType: 'inline'
+    script: Copy-Item '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts' -Destination '$(Build.Repository.LocalPath)\$(Build.Repository.Name)' -Recurse -Force
+
+- task: PowerShell@2
+  displayName: 'Run Pipeline'
+  env:
+    LicenseFile: '$(LicenseFile)'
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\UpdateEnv.ps1'
+    arguments: '-environment "AzureDevOps" -aadTenantId $(aadTenantId) -newEnvironmentName $(newEnvironmentName) -environmentName $(environmentName)'
+    failOnStderr: true
