@@ -1,7 +1,7 @@
 $aadTenantId = {$env:aadTenantId}
 $newEnvironmentName = {$env:newEnvironmentName}
 $environmentName = {$env:environmentName}
-
+$bcSaasCustomers = {$env:bcSaasCustomers}
 
 Write-Host $aadTenantId
 Write-Host $newEnvironmentName
@@ -10,7 +10,7 @@ Write-Host $environmentName
 
 $aadAppRedirectUri = "http://localhost"                   # partner's AAD app redirect URI
 
-$response = Invoke-RestMethod -Uri "$(bcSaasCustomers)" -UseBasicParsing -ContentType "application/json" -OutFile $OutPath
+$response = Invoke-RestMethod -Uri $bcSaasCustomers -UseBasicParsing -ContentType "application/json" -OutFile $OutPath
 $tenants = Get-Content $OutPath -raw | Out-String | ConvertFrom-Json
 $refreshToken = $tenants.value.where({$_.tenantId -eq "$aadTenantId"}).refreshToken
 $authContext = New-BcAuthContext -tenantID $aadTenantId -refreshToken $refreshToken
