@@ -4,8 +4,7 @@
     [Parameter(Mandatory=$false)]
     [string] $newEnvironmentName = "",
     [Parameter(Mandatory=$false)]
-    [string] $environmentName = "",
-    [Parameter(Mandatory=$false)]
+    [string] $environmentName = ""
 )
 Write-Host $aadTenantId
 Write-Host $newEnvironmentName
