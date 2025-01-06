@@ -14,11 +14,9 @@ steps:
     script: Copy-Item '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts' -Destination '$(Build.Repository.LocalPath)\$(Build.Repository.Name)' -Recurse -Force
 
 - task: PowerShell@2
-  displayName: 'Run Pipeline'
-  env:
-    LicenseFile: '$(LicenseFile)'
+  displayName: 'Update environment'
   inputs:
     targetType: filePath
     filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\UpdateEnv.ps1'
-    arguments: '-environment "AzureDevOps" -aadTenantId $(aadTenantId) -newEnvironmentName $(newEnvironmentName) -environmentName $(environmentName)'
+    arguments: 'aadTenantId $(aadTenantId) -newEnvironmentName $(newEnvironmentName) -environmentName $(environmentName)'
     failOnStderr: true
