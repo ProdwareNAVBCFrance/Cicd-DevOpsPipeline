@@ -1,11 +1,7 @@
-Param(
-    [Parameter(Mandatory=$false)]
-    [string] $aadTenantId = "",
-    [Parameter(Mandatory=$false)]
-    [string] $newEnvironmentName = "",
-    [Parameter(Mandatory=$false)]
-    [string] $environmentName = ""
-)
+$aadTenantId = {$env:aadTenantId}
+$newEnvironmentName = {$env:newEnvironmentName}
+$environmentName = {$env:environmentName}
+
 Write-Host $aadTenantId
 Write-Host $newEnvironmentName
 Write-Host $environmentName
