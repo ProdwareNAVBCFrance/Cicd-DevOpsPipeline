@@ -18,5 +18,5 @@ steps:
   inputs:
     targetType: filePath
     filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\UpdateEnv.ps1'
-    arguments: 'aadTenantId $(aadTenantId) -newEnvironmentName $(newEnvironmentName) -environmentName $(environmentName)'
+    arguments: '-aadTenantId $(aadTenantId) -newEnvironmentName $(newEnvironmentName) -environmentName $(environmentName)'
     failOnStderr: true
