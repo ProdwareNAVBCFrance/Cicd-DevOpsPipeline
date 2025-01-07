@@ -20,13 +20,16 @@ $refreshToken = $tenants.value.where({$_.tenantId -eq "$aadTenantId"}).refreshTo
 $authContext = New-BcAuthContext -tenantID $aadTenantId -refreshToken $refreshToken
 
 # Delete environment
-$LogDeleteSandbox = 'Delete $($newEnvironmentName) sandbox.'
+$LogDeleteSandbox = "Delete $($newEnvironmentName) sandbox."
 Write-Host $LogDeleteSandbox
 
+try
+{
 # Remove the environment and wait for the deletion to complete
 Remove-BcEnvironment -bcAuthContext $authContext -environment $newEnvironmentName -doNotWait:$false
-
-$LogCreateNewSandbox = 'Create new environment $($newEnvironmentName) type Sandbox from copy of $($environmentName).'
+}
+catch{ Write-host $_.Exception.Message } 
+$LogCreateNewSandbox = "Create new environment $($newEnvironmentName) type Sandbox from copy of $($environmentName)."
 Write-Host $LogCreateNewSandbox
 
 # copy environment
