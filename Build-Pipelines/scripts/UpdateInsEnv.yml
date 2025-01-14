@@ -22,6 +22,6 @@ jobs:
         displayName: "Update environment"
         inputs:
           targetType: filePath
-          filePath: '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts\UpdateEnv.ps1'
+          filePath: '$(Build.Repository.LocalPath)\Build-Pipelines\scripts\UpdateEnv.ps1'
           arguments: "-aadTenantId $(aadTenantId) -newEnvironmentName $(newEnvironmentName) -environmentName $(environmentName)"
           failOnStderr: true
