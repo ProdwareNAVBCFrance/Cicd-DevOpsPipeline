@@ -17,7 +17,7 @@ jobs:
     skipComponentGovernanceDetection: True
     EnableAppSourceProcess: False
 
-steps:    
+steps:
 - task: PowerShell@2
   displayName: 'Update environment'
   inputs:
