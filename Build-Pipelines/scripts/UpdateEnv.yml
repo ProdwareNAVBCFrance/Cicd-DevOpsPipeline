@@ -8,9 +8,15 @@ steps:
 - checkout: Shared
 
 - task: PowerShell@2
+  displayName: 'Prepare scripts for App Repo'
+  inputs:
+    targetType: 'inline'
+    script: Copy-Item '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts' -Destination '$(Build.Repository.LocalPath)\$(Build.Repository.Name)' -Recurse -Force
+
+- task: PowerShell@2
   displayName: 'Update environment'
   inputs:
     targetType: filePath
-    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\Build-Pipelines\scripts\UpdateEnv.ps1'
+    filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\UpdateEnv.ps1'
     arguments: '-aadTenantId $(aadTenantId) -newEnvironmentName $(newEnvironmentName) -environmentName $(environmentName)'
     failOnStderr: true
