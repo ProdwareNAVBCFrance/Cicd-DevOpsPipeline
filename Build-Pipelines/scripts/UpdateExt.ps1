@@ -1,12 +1,15 @@
 ﻿Param(
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$true)]
     [string] $aadTenantId = "",
+    [Parameter(Mandatory=$true)]
+    [string] $environmentName = "",
     [switch] $globalExt,
     [switch] $scheduleBCUpdate
 )
 Write-Host $aadTenantId
-Write-Host $newEnvironmentName
 Write-Host $environmentName
+Write-Host $globalExt
+Write-Host $scheduleBCUpdate
 
 
 $OutPath = "$($PSScriptRoot)\bcSaasCustomers.json"
