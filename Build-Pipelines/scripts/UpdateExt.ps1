@@ -29,6 +29,7 @@ if ($globalExt.IsPresent) {
 # update BC version
 if ($scheduleBCUpdate.IsPresent) {
     $ScheduledUpgrade = Get-BcEnvironmentScheduledUpgrade -bcAuthContext $authContext -environment $environmentName
-    write-host $ScheduledUpgrade.preferredStartTime
-    Reschedule-BcEnvironmentUpgrade  -bcAuthContext $authContext -environment $environmentName -runOn $ScheduledUpgrade.preferredStartTime -ignoreUpgradeWindow $true
+    $dateTime = Get-Date
+    write-host $dateTime
+    Reschedule-BcEnvironmentUpgrade  -bcAuthContext $authContext -environment $environmentName -runOn $dateTime -ignoreUpgradeWindow $true
 }
