@@ -1,10 +1,5 @@
 name: Update environment
 
-schedules:
-  - cron: ${cronSchedule}
-    displayName: "Depending variable"
-    always: true  # Always run the pipeline according to the cron schedule
-
 resources:
   repositories:
     - repository: Shared
