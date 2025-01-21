@@ -2,6 +2,9 @@ name: Update environment
 schedules:
 - cron: '0 5 1 * *'
   displayName: At 5:00am on the 1st
+  branches:
+    include:
+    - main
   always: true
 
 resources:
