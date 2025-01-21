@@ -25,5 +25,7 @@ Write-Host $LogCreateNewSandbox
 # copy environment
 # switch true delete the previous environment if present
 Copy-BcEnvironment -bcAuthContext $authContext -environment $newEnvironmentName -sourceEnvironment $environmentName -force:$true -doNotWait:$false
+# list all databse usage of all environments
+Get-BcEnvironmentUsedStorage -bcAuthContext $authContext
 
 
