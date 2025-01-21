@@ -30,5 +30,5 @@ if ($globalExt.IsPresent) {
 if ($scheduleBCUpdate.IsPresent) {
     $ScheduledUpgrade = Get-BcEnvironmentScheduledUpgrade -bcAuthContext $authContext -environment $environmentName
     write-host $ScheduledUpgrade.earliestSelectableUpgradeDate
-    Reschedule-BcEnvironmentUpgrade  -bcAuthContext $authContext -environment $environmentName -runOn '2025-01-21T00:00:00Z' -ignoreUpgradeWindow $true
+    Reschedule-BcEnvironmentUpgrade  -bcAuthContext $authContext -environment $environmentName -runOn '2025-01-22T01:00:00Z' -ignoreUpgradeWindow $true
 }
