@@ -23,5 +23,5 @@ jobs:
         inputs:
           targetType: filePath
           filePath: '$(Build.Repository.LocalPath)\Build-Pipelines\scripts\UpdateExt.ps1'
-          arguments: "-aadTenantId $(aadTenantId) -globalExt:$$(globalExt) -scheduleBCUpdate:$$(scheduleBCUpdate)"
+          arguments: "-aadTenantId $(aadTenantId) -environmentName $(environmentName) -globalExt:$$(globalExt) -scheduleBCUpdate:$$(scheduleBCUpdate)"
           failOnStderr: true
