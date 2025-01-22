@@ -19,8 +19,8 @@ $tenants = Get-Content $OutPath -raw | Out-String | ConvertFrom-Json
 $refreshToken = $tenants.value.where({ $_.tenantId -eq "$aadTenantId" }).refreshToken
 $authContext = New-BcAuthContext -tenantID $aadTenantId -refreshToken $refreshToken
 
-$LogCreateNewSandbox = "Create new environment $($newEnvironmentName) type Sandbox from copy of $($environmentName)."
-Write-Host $LogCreateNewSandbox
+$Log = "Update environment $($newEnvironmentName)."
+Write-Host $Log
 
 # update global ext.
 if ($globalExt.IsPresent) {
@@ -34,5 +34,9 @@ if ($scheduleBCUpdate.IsPresent) {
         #Reschedule-BcEnvironmentUpgrade  -bcAuthContext $authContext -environment $environmentName -runOn $UpdateWindow.preferredStartTimeUtc -ignoreUpgradeWindow $true
         $dateTime = (Get-Date).AddMinutes(1)
         Reschedule-BcEnvironmentUpgrade  -bcAuthContext $authContext -environment $environmentName -runOn $dateTime -ignoreUpgradeWindow $true
+    }
+    else {
+        $Log = "Environment $($newEnvironmentName) is up to date."
+        Write-Host $Log    
     }
 }
