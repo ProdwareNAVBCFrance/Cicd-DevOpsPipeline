@@ -4,14 +4,16 @@
     [Parameter(Mandatory = $true)]
     [string] $environmentName = "",
     [switch] $globalExt,
-    [switch] $scheduleBCUpdate
+    [switch] $scheduleBCUpdate,
+    [switch] $useEnvironmentUpdateWindow = $false
 )
 Write-Host $aadTenantId
 Write-Host $environmentName
 Write-Host $globalExt
 Write-Host $scheduleBCUpdate
 
-
+$applicationFamily = "BusinessCentral"
+$apiVersion = "v2.6"
 $OutPath = "$($PSScriptRoot)\bcSaasCustomers.json"
 
 $response = Invoke-RestMethod -Uri "https://frbc.blob.core.windows.net/bcsaascustomers/bcSaasCustomers.json?sp=r&st=2024-01-16T10:14:40Z&se=2030-01-01T18:14:40Z&spr=https&sv=2022-11-02&sr=b&sig=LcwDV1NdSlNJmKUgjEpRVPP98k%2Fa%2BDvNB52elt5632s%3D" -UseBasicParsing -ContentType "application/json" -OutFile $OutPath
@@ -24,6 +26,44 @@ Write-Host $Log
 
 # update global ext.
 if ($globalExt.IsPresent) {
+    $bearerAuthValue = "Bearer $($authContext.AccessToken)"
+    $headers = @{ "Authorization" = $bearerAuthValue }
+    #Get availableupdates for global apps
+    try {
+        $publishedApps = (Invoke-RestMethod -Method Get -UseBasicParsing -Uri "https://api.businesscentral.dynamics.com/admin/$apiVersion/applications/$applicationFamily/environments/$environment/apps/availableUpdates" -Headers $headers).Value
+    }
+    catch {
+        Write-Host $_.Exception.Message
+    }
+    #filter on non Microsoft apps
+    $Partners = $publishedApps | Where-Object { $_.publisher -ne "Microsoft" }
+    #Write-Host $Partners
+    foreach($app in $Partners)
+    {
+        Write-Host "Updating $($app.appId) to version $($app.version) on $($environment)"
+        $authContext = Renew-BcAuthContext -bcAuthContext $authContext
+        $bearerAuthValue = "Bearer $($authContext.AccessToken)"
+        $headers = @{ "Authorization" = $bearerAuthValue }
+    <#
+    { 
+      "useEnvironmentUpdateWindow": false/true, // If set to true, the operation will be executed only in the environment update window. It will appear as "scheduled" before it runs in the window.
+      "targetVersion": "1.2.3.4", // Always required. There's no option to update to the latest. You have to first do a "availableAppUpdates", call then use the version here.
+      "allowPreviewVersion": false/true,  
+      "installOrUpdateNeededDependencies": false/true, // Value indicating whether any other app dependencies should be installed or updated; otherwise, information about missing app dependencies will be returned as error details
+    }
+    #>
+        $body = @{ "useEnvironmentUpdateWindow" = $false }
+        $body += @{ "targetVersion" = "$($app.version)" } 
+        $body += @{ "installOrUpdateNeededDependencies" = $true } 
+        Write-Host ($body | ConvertTo-Json)
+        try {
+            $operation = Invoke-RestMethod -Method Post -UseBasicParsing -Uri "https://api.businesscentral.dynamics.com/admin/$apiVersion/applications/BusinessCentral/environments/$environment/apps/$($app.appId)/Update" -Headers $headers -ContentType "application/json" -Body ($body | ConvertTo-Json)
+        }
+        catch {
+            Write-Host $_.Exception.Message
+        }
+        Write-Host $operation
+    }
 }
 
 # update BC version
