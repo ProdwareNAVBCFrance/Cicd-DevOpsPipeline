@@ -55,7 +55,7 @@ if ($globalExt.IsPresent) {
       "installOrUpdateNeededDependencies": false/true, // Value indicating whether any other app dependencies should be installed or updated; otherwise, information about missing app dependencies will be returned as error details
     }
     #>
-        $body = @{ "useEnvironmentUpdateWindow" = $false }
+        $body = @{ "useEnvironmentUpdateWindow" = $useEnvironmentUpdateWindow }
         $body += @{ "targetVersion" = "$($app.version)" } 
         $body += @{ "installOrUpdateNeededDependencies" = $true } 
         Write-Host ($body | ConvertTo-Json)
