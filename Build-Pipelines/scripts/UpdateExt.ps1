@@ -21,16 +21,18 @@ $tenants = Get-Content $OutPath -raw | Out-String | ConvertFrom-Json
 $refreshToken = $tenants.value.where({ $_.tenantId -eq "$aadTenantId" }).refreshToken
 $authContext = New-BcAuthContext -tenantID $aadTenantId -refreshToken $refreshToken
 
-$Log = "Update environment $($newEnvironmentName)."
+$Log = "Update environment $($environmentName)."
 Write-Host $Log
 
 # update global ext.
 if ($globalExt.IsPresent) {
+    $Log = "Update global apps on $($environmentName)."
+    Write-Host $Log
     $bearerAuthValue = "Bearer $($authContext.AccessToken)"
     $headers = @{ "Authorization" = $bearerAuthValue }
     #Get availableupdates for global apps
     try {
-        $publishedApps = (Invoke-RestMethod -Method Get -UseBasicParsing -Uri "https://api.businesscentral.dynamics.com/admin/$apiVersion/applications/$applicationFamily/environments/$environment/apps/availableUpdates" -Headers $headers).Value
+        $publishedApps = (Invoke-RestMethod -Method Get -UseBasicParsing -Uri "https://api.businesscentral.dynamics.com/admin/$apiVersion/applications/$applicationFamily/environments/$environmentName/apps/availableUpdates" -Headers $headers).Value
     }
     catch {
         Write-Host $_.Exception.Message
@@ -40,7 +42,7 @@ if ($globalExt.IsPresent) {
     #Write-Host $Partners
     foreach($app in $Partners)
     {
-        Write-Host "Updating $($app.appId) to version $($app.version) on $($environment)"
+        Write-Host "Updating $($app.appId) to version $($app.version) on $($environmentName)"
         $authContext = Renew-BcAuthContext -bcAuthContext $authContext
         $bearerAuthValue = "Bearer $($authContext.AccessToken)"
         $headers = @{ "Authorization" = $bearerAuthValue }
@@ -57,7 +59,7 @@ if ($globalExt.IsPresent) {
         $body += @{ "installOrUpdateNeededDependencies" = $true } 
         Write-Host ($body | ConvertTo-Json)
         try {
-            $operation = Invoke-RestMethod -Method Post -UseBasicParsing -Uri "https://api.businesscentral.dynamics.com/admin/$apiVersion/applications/BusinessCentral/environments/$environment/apps/$($app.appId)/Update" -Headers $headers -ContentType "application/json" -Body ($body | ConvertTo-Json)
+            $operation = Invoke-RestMethod -Method Post -UseBasicParsing -Uri "https://api.businesscentral.dynamics.com/admin/$apiVersion/applications/BusinessCentral/environments/$environmentName/apps/$($app.appId)/Update" -Headers $headers -ContentType "application/json" -Body ($body | ConvertTo-Json)
         }
         catch {
             Write-Host $_.Exception.Message
