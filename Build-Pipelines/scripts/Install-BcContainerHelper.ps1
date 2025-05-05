@@ -1,4 +1,4 @@
-﻿Param(
+Param(
     [string] $bcContainerHelperVersion = "",
     [string] $genericImageName = ""
 )
@@ -11,14 +11,11 @@ if ($bccontainerHelperVersion -like "https://*") {
 }
 else {
     $bcbaseurl = "https://bccontainerhelper.blob.core.windows.net/public"
-    $versionsxml = [xml](New-Object System.Net.WebClient).DownloadString("$($bcbaseurl)?comp=list&restype=container")
-
-    $latestVersion = $versionsxml.EnumerationResults.ChildNodes.Blob.Name | Where-Object { $_ -ne "latest.zip" -and $_ -notlike "*preview*" } | ForEach-Object { $_.replace('.zip','') } | Sort-Object { [Version]$_ } | Select-Object -Last 1
-    $previewVersion = $versionsxml.EnumerationResults.ChildNodes.Blob.Name | Where-Object { $_ -like "*-preview*" } | ForEach-Object { $_.replace('.zip','') } | Sort-Object { [Version]($_.replace('-preview','.')) } | Select-Object -Last 1
-    if ([version]$latestVersion -ge [version]($previewVersion.split('-')[0])) {
-        $previewVersion = $latestVersion
-    }
     
+
+    
+    $latestVersion = "latest"
+    $previewVersion = "preview"
     if ($bccontainerHelperVersion -eq "latest") {
         $bccontainerHelperVersion = $latestVersion
     }
