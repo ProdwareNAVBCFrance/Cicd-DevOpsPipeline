@@ -43,9 +43,6 @@ switch (${env:DEPENDENCIESARTIFACTSFEED}) {
     "Release" {
         $artifactsFeedServerUrl = "$ENV:ArtifactsFeedServerUrl"
     }
-    "NextMajor" {
-        $artifactsFeedServerUrl = "$ENV:ArtifactsNextMajorFeedServerUrl"
-    }
     "Preview" {
         $artifactsFeedServerUrl = "$ENV:ArtifactsPreviewFeedServerUrl"
     }
