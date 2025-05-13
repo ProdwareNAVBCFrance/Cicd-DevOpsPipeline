@@ -1,14 +1,14 @@
 ﻿Param(
-    [Parameter(Mandatory=$false)]
-    [ValidateSet('AzureDevOps','GithubActions','GitLab')]
+    [Parameter(Mandatory = $false)]
+    [ValidateSet('AzureDevOps', 'GithubActions', 'GitLab')]
     [string] $environment = 'AzureDevOps',
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string] $version = "",
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [int] $appBuild = 0,
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [int] $appRevision = 0,
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [switch] $AppSourceProcess
 )
 Write-Host $appBuild
@@ -38,6 +38,54 @@ if (Test-Path $testResultsFiles) {
     Remove-Item $testResultsFiles -Force
 }
 #$disabledTests = (Get-Content $disabledTestsFile | ConvertFrom-Json)
+
+switch (${env:DEPENDENCIESARTIFACTSFEED}) {
+    "Release" {
+        $artifactsFeedServerUrl = "$ENV:ArtifactsFeedServerUrl"
+    }
+    "NextMajor" {
+        $artifactsFeedServerUrl = "$ENV:ArtifactsNextMajorFeedServerUrl"
+    }
+    "Preview" {
+        $artifactsFeedServerUrl = "$ENV:ArtifactsPreviewFeedServerUrl"
+    }
+    Default {
+        $artifactsFeedServerUrl = ""
+    }
+}
+$artifactsFeedPat = "$ENV:ArtifactsFeedPat"
+
+if ($artifactsFeedServerUrl -ne "") {
+    $params += @{
+        "InstallMissingDependencies" = {
+            Param([Hashtable]$parameters)
+            $parameters.missingDependencies | ForEach-Object {
+                $appid = $_.Split(':')[0]
+                $appName = $_.Split(':')[1]
+                $version = $appName.SubString($appName.LastIndexOf('_') + 1)
+                $version = [System.Version]$version.SubString(0, $version.Length - 4)
+                $publishParams = @{
+                    "nuGetServerUrl" = $artifactsFeedServerUrl 
+                    "nuGetToken"     = $artifactsFeedPat
+                    "packageName"    = $appId
+                    "version"        = $version
+                }
+                if ($parameters.ContainsKey('CopyInstalledAppsToFolder')) {
+                    $publishParams += @{
+                        "CopyInstalledAppsToFolder" = $parameters.CopyInstalledAppsToFolder
+                    }
+                }
+                if ($parameters.ContainsKey('containerName')) {
+                    Publish-BcNuGetPackageToContainer -containerName $parameters.containerName -tenant $parameters.tenant -skipVerification -appSymbolsFolder $parameters.appSymbolsFolder @publishParams -ErrorAction SilentlyContinue -Select LatestMatching
+                }
+                else {
+                    Download-BcNuGetPackageToFolder -folder $parameters.appSymbolsFolder @publishParams -Select LatestMatching | Out-Null
+                }
+            }
+        }
+    }
+}
+
 
 Run-AlPipeline @params `
     -pipelinename $pipelineName `
@@ -75,13 +123,13 @@ Run-AlPipeline @params `
     -appBuild $appBuild -appRevision $appRevision `
     -enableTaskScheduler:$enableTaskScheduler `
     -NewBcContainer {
-        Param([Hashtable]$parameters)
-        $parameters += @{ "dns" = "8.8.8.8" }
-        New-BcContainer @parameters
-        Invoke-ScriptInBcContainer $parameters.ContainerName -scriptblock {
-            $progressPreference = 'SilentlyContinue'
-        }
+    Param([Hashtable]$parameters)
+    $parameters += @{ "dns" = "8.8.8.8" }
+    New-BcContainer @parameters
+    Invoke-ScriptInBcContainer $parameters.ContainerName -scriptblock {
+        $progressPreference = 'SilentlyContinue'
     }
+}
     
 if ($environment -eq 'AzureDevOps') {
     Write-Host "##vso[task.setvariable variable=TestResults]$allTestResults"
