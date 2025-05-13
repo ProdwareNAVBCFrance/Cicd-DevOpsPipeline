@@ -38,7 +38,7 @@ steps:
       testResultsFiles: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\$(testResults)'
       failTaskOnFailedTests: true
 
-  - task: CreateNugetPackage@2
+  - task: PowerShell@2
     displayName: "Create NuGet Package"
     inputs:
       targetType: filePath
