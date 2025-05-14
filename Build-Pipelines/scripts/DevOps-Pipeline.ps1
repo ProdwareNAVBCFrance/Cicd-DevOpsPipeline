@@ -38,7 +38,7 @@ if (Test-Path $testResultsFiles) {
     Remove-Item $testResultsFiles -Force
 }
 #$disabledTests = (Get-Content $disabledTestsFile | ConvertFrom-Json)
-
+Connect-AzAccount -TenantId "bbfde416-ad70-4316-81eb-73b70da0b6cd"
 if (("$vaultNameForLocal" -eq "") -or !(Get-AzKeyVault -VaultName $vaultNameForLocal)) {
     throw "You need to setup a Key Vault for use with local pipelines"
 }
