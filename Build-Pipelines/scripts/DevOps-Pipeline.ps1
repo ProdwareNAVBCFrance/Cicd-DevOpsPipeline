@@ -39,49 +39,49 @@ if (Test-Path $testResultsFiles) {
 }
 #$disabledTests = (Get-Content $disabledTestsFile | ConvertFrom-Json)
 
-switch (${env:DEPENDENCIESARTIFACTSFEED}) {
-    "Release" {
-        $artifactsFeedServerUrl = "$ENV:ArtifactsFeedServerUrl"
-    }
-    "Preview" {
-        $artifactsFeedServerUrl = "$ENV:ArtifactsPreviewFeedServerUrl"
-    }
-    Default {
-        $artifactsFeedServerUrl = ""
+# Get packages from NuGet >>
+if ($settings.additionalNuGetFeeds) {
+    $bcContainerHelperConfig.TrustedNuGetFeeds = @()
+    $settings.additionalNuGetFeeds | ForEach-Object {
+        if (($_ -eq "latest") -and ($settings.nugetFeedUrlForLatest)) {
+            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $ENV:SystemAccessToken }
+        }
+        elseif (($_ -eq "release") -and ($settings.nugetFeedUrlForRelease)) {
+            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForRelease; "Token" = $ENV:SystemAccessToken }
+        }
+        else {
+            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $_.Trim(); "Token" = $ENV:SystemAccessToken }
+        }
     }
 }
-$artifactsFeedPat = "$ENV:ArtifactsFeedPat"
 
-if ($artifactsFeedServerUrl -ne "") {
-    $params += @{
-        "InstallMissingDependencies" = {
-            Param([Hashtable]$parameters)
-            $parameters.missingDependencies | ForEach-Object {
-                $appid = $_.Split(':')[0]
-                $appName = $_.Split(':')[1]
-                $version = $appName.SubString($appName.LastIndexOf('_') + 1)
-                $version = [System.Version]$version.SubString(0, $version.Length - 4)
-                $publishParams = @{
-                    "nuGetServerUrl" = $artifactsFeedServerUrl 
-                    "nuGetToken"     = $artifactsFeedPat
-                    "packageName"    = $appId
-                    "version"        = $version
+$params += @{
+    "InstallMissingDependencies" = {
+        Param([Hashtable]$parameters)
+        $parameters.missingDependencies | ForEach-Object {
+            $appid = $_.Split(':')[0]
+            $appName = $_.Split(':')[1]
+            $version = $appName.SubString($appName.LastIndexOf('_') + 1)
+            $version = [System.Version]$version.SubString(0, $version.Length - 4)
+            $publishParams = @{
+                "packageName" = $appId
+                "version"     = $version
+            }
+            if ($parameters.ContainsKey('CopyInstalledAppsToFolder')) {
+                $publishParams += @{
+                    "CopyInstalledAppsToFolder" = $parameters.CopyInstalledAppsToFolder
                 }
-                if ($parameters.ContainsKey('CopyInstalledAppsToFolder')) {
-                    $publishParams += @{
-                        "CopyInstalledAppsToFolder" = $parameters.CopyInstalledAppsToFolder
-                    }
-                }
-                if ($parameters.ContainsKey('containerName')) {
-                    Publish-BcNuGetPackageToContainer -containerName $parameters.containerName -tenant $parameters.tenant -skipVerification -appSymbolsFolder $parameters.appSymbolsFolder @publishParams -ErrorAction SilentlyContinue -Select LatestMatching
-                }
-                else {
-                    Download-BcNuGetPackageToFolder -folder $parameters.appSymbolsFolder @publishParams -Select LatestMatching | Out-Null
-                }
+            }
+            if ($parameters.ContainsKey('containerName')) {
+                Publish-BcNuGetPackageToContainer -containerName $parameters.containerName -tenant $parameters.tenant -skipVerification -appSymbolsFolder $parameters.appSymbolsFolder @publishParams -ErrorAction SilentlyContinue -Select LatestMatching
+            }
+            else {
+                Download-BcNuGetPackageToFolder -folder $parameters.appSymbolsFolder @publishParams -Select LatestMatching | Out-Null
             }
         }
     }
 }
+# Get packages from NuGet <<
 
 
 Run-AlPipeline @params `
