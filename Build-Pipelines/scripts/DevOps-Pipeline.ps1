@@ -42,15 +42,23 @@ if (Test-Path $testResultsFiles) {
 # Get packages from NuGet >>
 if ($settings.additionalNuGetFeeds) {
     $bcContainerHelperConfig.TrustedNuGetFeeds = @()
-    $settings.additionalNuGetFeeds | ForEach-Object {
-        if (($_ -eq "latest") -and ($settings.nugetFeedUrlForLatest)) {
-            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = "$ENV:ArtifactsFeedPat" }
-        }
-        elseif (($_ -eq "release") -and ($settings.nugetFeedUrlForRelease)) {
-            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForRelease; "Token" = "$ENV:ArtifactsFeedPat" }
-        }
-        else {
-            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $_.Trim(); "Token" = "$ENV:ArtifactsFeedPat" }
+    
+    # Convert JSON string to PowerShell object
+    $jsonObject = $settings.additionalNuGetFeeds | ConvertFrom-Json
+
+    # Access and set to $bcContainerHelperConfig
+    foreach ($feed in $jsonObject.additionalNuGetFeeds) {
+        switch ($feed.source) {
+            "latest" {
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $feed.token }
+            }
+            "release" {
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForRelease; "Token" = $feed.token }
+
+            }
+            Default {
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $feed.source; "Token" = $feed.token }
+            }
         }
     }
 }
