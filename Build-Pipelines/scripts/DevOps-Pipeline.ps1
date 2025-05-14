@@ -39,18 +39,27 @@ if (Test-Path $testResultsFiles) {
 }
 #$disabledTests = (Get-Content $disabledTestsFile | ConvertFrom-Json)
 
+if (("$vaultNameForLocal" -eq "") -or !(Get-AzKeyVault -VaultName $vaultNameForLocal)) {
+    throw "You need to setup a Key Vault for use with local pipelines"
+}
+Get-AzKeyVaultSecret -VaultName $vaultNameForLocal | ForEach-Object {
+    Write-Host "Get Secret $($_.Name)Secret"
+    Set-Variable -Name "$($_.Name)Secret" -Value (Get-AzKeyVaultSecret -VaultName $vaultNameForLocal -Name $_.Name -WarningAction SilentlyContinue)
+}
+
+
 # Get packages from NuGet >>
 if ($settings.additionalNuGetFeeds) {
     $bcContainerHelperConfig.TrustedNuGetFeeds = @()
     $settings.additionalNuGetFeeds | ForEach-Object {
         if (($_ -eq "latest") -and ($settings.nugetFeedUrlForLatest)) {
-            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $ENV:SystemAccessToken }
+            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $ArtifactsFeedPat.SecretValue }
         }
         elseif (($_ -eq "release") -and ($settings.nugetFeedUrlForRelease)) {
-            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForRelease; "Token" = $ENV:SystemAccessToken }
+            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForRelease; "Token" = $ArtifactsFeedPat.SecretValue }
         }
         else {
-            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $_.Trim(); "Token" = $ENV:SystemAccessToken }
+            $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $_.Trim(); "Token" = $ArtifactsFeedPat.SecretValue }
         }
     }
 }
