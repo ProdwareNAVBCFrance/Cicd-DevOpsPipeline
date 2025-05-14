@@ -42,12 +42,8 @@ if (Test-Path $testResultsFiles) {
 # Get packages from NuGet >>
 if ($settings.additionalNuGetFeeds) {
     $bcContainerHelperConfig.TrustedNuGetFeeds = @()
-    
-    # Convert JSON string to PowerShell object
-    $jsonObject = $settings.additionalNuGetFeeds | ConvertFrom-Json
-
     # Access and set to $bcContainerHelperConfig
-    foreach ($feed in $jsonObject.additionalNuGetFeeds) {
+    foreach ($feed in $settings.additionalNuGetFeeds) {
         switch ($feed.source) {
             "latest" {
                 $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $feed.token }
