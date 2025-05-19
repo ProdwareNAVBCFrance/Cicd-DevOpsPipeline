@@ -47,6 +47,9 @@ if ($settings.additionalNuGetFeeds) {
         if ($feed.token -eq "internal") {
             $feedtoken = "$ENV:ArtifactsFeedPat"
         }
+        else {
+            $feedtoken = $feed.token
+        }
         switch ($feed.source) {
             "latest" {
                 $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $feedtoken }
