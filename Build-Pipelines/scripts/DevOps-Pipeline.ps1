@@ -44,12 +44,15 @@ if ($settings.additionalNuGetFeeds) {
     $bcContainerHelperConfig.TrustedNuGetFeeds = @()
     # Access and set to $bcContainerHelperConfig
     foreach ($feed in $settings.additionalNuGetFeeds) {
+        if ($feed.token -eq "internal") {
+            $feedtoken = "$ENV:ArtifactsFeedPat"
+        }
         switch ($feed.source) {
             "latest" {
-                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $feed.token }
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $feedtoken }
             }
             "release" {
-                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForRelease; "Token" = $feed.token }
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForRelease; "Token" = $feedtoken }
 
             }
             Default {
