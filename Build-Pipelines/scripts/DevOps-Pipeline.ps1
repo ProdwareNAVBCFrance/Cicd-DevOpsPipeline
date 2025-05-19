@@ -39,49 +39,53 @@ if (Test-Path $testResultsFiles) {
 }
 #$disabledTests = (Get-Content $disabledTestsFile | ConvertFrom-Json)
 
-switch (${env:DEPENDENCIESARTIFACTSFEED}) {
-    "Release" {
-        $artifactsFeedServerUrl = "$ENV:ArtifactsFeedServerUrl"
-    }
-    "Preview" {
-        $artifactsFeedServerUrl = "$ENV:ArtifactsPreviewFeedServerUrl"
-    }
-    Default {
-        $artifactsFeedServerUrl = ""
-    }
-}
-$artifactsFeedPat = "$ENV:ArtifactsFeedPat"
+# Get packages from NuGet >>
+if ($settings.additionalNuGetFeeds) {
+    $bcContainerHelperConfig.TrustedNuGetFeeds = @()
+    # Access and set to $bcContainerHelperConfig
+    foreach ($feed in $settings.additionalNuGetFeeds) {
+        switch ($feed.source) {
+            "latest" {
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $feed.token }
+            }
+            "release" {
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForRelease; "Token" = $feed.token }
 
-if ($artifactsFeedServerUrl -ne "") {
-    $params += @{
-        "InstallMissingDependencies" = {
-            Param([Hashtable]$parameters)
-            $parameters.missingDependencies | ForEach-Object {
-                $appid = $_.Split(':')[0]
-                $appName = $_.Split(':')[1]
-                $version = $appName.SubString($appName.LastIndexOf('_') + 1)
-                $version = [System.Version]$version.SubString(0, $version.Length - 4)
-                $publishParams = @{
-                    "nuGetServerUrl" = $artifactsFeedServerUrl 
-                    "nuGetToken"     = $artifactsFeedPat
-                    "packageName"    = $appId
-                    "version"        = $version
-                }
-                if ($parameters.ContainsKey('CopyInstalledAppsToFolder')) {
-                    $publishParams += @{
-                        "CopyInstalledAppsToFolder" = $parameters.CopyInstalledAppsToFolder
-                    }
-                }
-                if ($parameters.ContainsKey('containerName')) {
-                    Publish-BcNuGetPackageToContainer -containerName $parameters.containerName -tenant $parameters.tenant -skipVerification -appSymbolsFolder $parameters.appSymbolsFolder @publishParams -ErrorAction SilentlyContinue -Select LatestMatching
-                }
-                else {
-                    Download-BcNuGetPackageToFolder -folder $parameters.appSymbolsFolder @publishParams -Select LatestMatching | Out-Null
-                }
+            }
+            Default {
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $feed.source; "Token" = $feed.token }
             }
         }
     }
 }
+
+$params += @{
+    "InstallMissingDependencies" = {
+        Param([Hashtable]$parameters)
+        $parameters.missingDependencies | ForEach-Object {
+            $appid = $_.Split(':')[0]
+            $appName = $_.Split(':')[1]
+            $version = $appName.SubString($appName.LastIndexOf('_') + 1)
+            $version = [System.Version]$version.SubString(0, $version.Length - 4)
+            $publishParams = @{
+                "packageName" = $appId
+                "version"     = $version
+            }
+            if ($parameters.ContainsKey('CopyInstalledAppsToFolder')) {
+                $publishParams += @{
+                    "CopyInstalledAppsToFolder" = $parameters.CopyInstalledAppsToFolder
+                }
+            }
+            if ($parameters.ContainsKey('containerName')) {
+                Publish-BcNuGetPackageToContainer -containerName $parameters.containerName -tenant $parameters.tenant -skipVerification -appSymbolsFolder $parameters.appSymbolsFolder @publishParams -ErrorAction SilentlyContinue -Select LatestMatching
+            }
+            else {
+                Download-BcNuGetPackageToFolder -folder $parameters.appSymbolsFolder @publishParams -Select LatestMatching | Out-Null
+            }
+        }
+    }
+}
+# Get packages from NuGet <<
 
 
 Run-AlPipeline @params `
