@@ -50,6 +50,8 @@ if ($settings.additionalNuGetFeeds) {
         else {
             $feedtoken = $feed.token
         }
+        Write-Host $feedtoken 
+
         switch ($feed.source) {
             "latest" {
                 $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $feedtoken }
