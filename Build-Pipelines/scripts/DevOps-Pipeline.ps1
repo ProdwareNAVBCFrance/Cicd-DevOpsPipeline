@@ -45,12 +45,11 @@ if ($settings.additionalNuGetFeeds) {
     # Access and set to $bcContainerHelperConfig
     foreach ($feed in $settings.additionalNuGetFeeds) {
         if ($feed.token -eq "internal") {
-            $feedtoken = "$ENV:ArtifactsFeedPat"
+            $feedtoken = $ENV:ArtifactsFeedPat
         }
         else {
             $feedtoken = $feed.token
         }
-        Write-Host $feedtoken 
 
         switch ($feed.source) {
             "latest" {
