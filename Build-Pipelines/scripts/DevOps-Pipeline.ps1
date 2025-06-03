@@ -45,7 +45,7 @@ if ($settings.additionalNuGetFeeds) {
     # Access and set to $bcContainerHelperConfig
     foreach ($feed in $settings.additionalNuGetFeeds) {
         if ($feed.token -eq "internal") {
-            $feedtoken = $ArtifactsFeedPat.SecretValue
+            $feedtoken = ${env:ArtifactsFeedPat}
         }
         else {
             $feedtoken = $feed.token
@@ -60,7 +60,7 @@ if ($settings.additionalNuGetFeeds) {
 
             }
             Default {
-                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $feed.source; "Token" = $feed.token }
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $feed.source; "Token" = $feedtoken }
             }
         }
     }
