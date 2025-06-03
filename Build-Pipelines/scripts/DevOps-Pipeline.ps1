@@ -14,7 +14,7 @@
 Write-Host $appBuild
 Write-Host $appRevision
 Write-Host $AppSourceProcess
-Write-Host $ENV:LicenseFile
+Write-Host $env:ArtifactsFeedPat
 
 if ($environment -eq "AzureDevOps") {
     $buildArtifactFolder = $ENV:BUILD_ARTIFACTSTAGINGDIRECTORY
