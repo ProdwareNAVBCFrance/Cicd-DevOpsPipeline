@@ -24,7 +24,7 @@ steps:
     displayName: "Run Pipeline"
     env:
       LicenseFile: "$(LicenseFile)"
-      ArtifactsFeedPat: "$(ArtifactsFeedPat)"
+      ArtifactsFeedPat: $(ArtifactsFeedPat)
     inputs:
       targetType: filePath
       filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-Pipeline.ps1'
