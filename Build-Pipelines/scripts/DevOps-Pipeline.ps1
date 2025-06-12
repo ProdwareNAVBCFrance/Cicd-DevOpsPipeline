@@ -1,4 +1,4 @@
-v﻿Param(
+﻿Param(
     [Parameter(Mandatory = $false)]
     [ValidateSet('AzureDevOps', 'GithubActions', 'GitLab')]
     [string] $environment = 'AzureDevOps',
