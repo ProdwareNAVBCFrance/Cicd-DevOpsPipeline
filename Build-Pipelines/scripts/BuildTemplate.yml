@@ -25,6 +25,8 @@ steps:
     env:
       LicenseFile: "$(LicenseFile)"
       ArtifactsFeedPat: $(ArtifactsFeedPat)
+      nugetFeedUrlForLatest: $(nugetFeedUrlForLatest)
+      nugetFeedUrlForRelease: $(nugetFeedUrlForRelease)
     inputs:
       targetType: filePath
       filePath: '$(Build.Repository.LocalPath)\$(Build.Repository.Name)\scripts\DevOps-Pipeline.ps1'
