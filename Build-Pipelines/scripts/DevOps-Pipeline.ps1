@@ -53,10 +53,10 @@ if ($settings.additionalNuGetFeeds) {
 
         switch ($feed.source) {
             "latest" {
-                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForLatest; "Token" = $feedtoken }
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $env:nugetFeedUrlForLatest; "Token" = $feedtoken }
             }
             "release" {
-                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $settings.nugetFeedUrlForRelease; "Token" = $feedtoken }
+                $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $env:nugetFeedUrlForRelease; "Token" = $feedtoken }
 
             }
             Default {
