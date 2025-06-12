@@ -1,4 +1,4 @@
-﻿Param(
+v﻿Param(
     [Parameter(Mandatory = $false)]
     [ValidateSet('AzureDevOps', 'GithubActions', 'GitLab')]
     [string] $environment = 'AzureDevOps',
@@ -25,7 +25,7 @@ elseif ($environment -eq "GitHubActions") {
 }
 
 $baseFolder = (Get-Item (Join-Path $PSScriptRoot "..")).FullName
-. (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $ENV:replacetargetversion
+. (Join-Path $PSScriptRoot "Read-Settings.ps1") -environment $environment -version $env:replacetargetversion
 . (Join-Path $PSScriptRoot "Install-BcContainerHelper.ps1") -bcContainerHelperVersion $bcContainerHelperVersion -genericImageName $genericImageName
 
 if (!$AppSourceProcess) {
