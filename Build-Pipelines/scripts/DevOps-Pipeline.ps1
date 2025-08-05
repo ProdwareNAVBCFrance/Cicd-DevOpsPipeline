@@ -1,15 +1,15 @@
-﻿Param(
-    [Parameter(Mandatory = $false)]
-    [ValidateSet('AzureDevOps', 'GithubActions', 'GitLab')]
-    [string] $environment = 'AzureDevOps',
-    [Parameter(Mandatory = $false)]
-    [string] $version = "",
-    [Parameter(Mandatory = $false)]
-    [int] $appBuild = 0,
-    [Parameter(Mandatory = $false)]
-    [int] $appRevision = 0,
-    [Parameter(Mandatory = $false)]
-    [switch] $AppSourceProcess
+Param(
+[Parameter(Mandatory = $false)]
+[ValidateSet('AzureDevOps', 'GithubActions', 'GitLab')]
+[string] $environment = 'AzureDevOps',
+[Parameter(Mandatory = $false)]
+[string] $version = "",
+[Parameter(Mandatory = $false)]
+[int] $appBuild = 0,
+[Parameter(Mandatory = $false)]
+[int] $appRevision = 0,
+[Parameter(Mandatory = $false)]
+[switch] $AppSourceProcess
 )
 Write-Host $appBuild
 Write-Host $appRevision
@@ -50,23 +50,22 @@ if ($settings.additionalNuGetFeeds) {
         else {
             $feedtoken = $feed.token
         }
-
+        
         switch ($feed.source) {
             "latest" {
                 $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $env:nugetFeedUrlForLatest; "Token" = $feedtoken }
             }
             "release" {
                 $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $env:nugetFeedUrlForRelease; "Token" = $feedtoken }
-
+                
             }
             Default {
                 $bcContainerHelperConfig.TrustedNuGetFeeds += [PSCustomObject]@{ "Url" = $feed.source; "Token" = $feedtoken }
             }
         }
     }
-}
 
-$params += @{
+    $params += @{
     "InstallMissingDependencies" = {
         Param([Hashtable]$parameters)
         $parameters.missingDependencies | ForEach-Object {
@@ -92,45 +91,48 @@ $params += @{
         }
     }
 }
+}
+
+
 # Get packages from NuGet <<
 
 
 Run-AlPipeline @params `
-    -pipelinename $pipelineName `
-    -containerName $containerName `
-    -imageName $imageName `
-    -artifact $artifact `
-    -accept_insiderEula `
-    -memoryLimit $memoryLimit `
-    -baseFolder $baseFolder `
-    -licenseFile $LicenseFile `
-    -installApps $installApps `
-    -previousApps $previousApps `
-    -appFolders $appFolders `
-    -testFolders $testFolders `
-    -doNotRunTests:$doNotRunTests `
-    -testResultsFile $testResultsFile `
-    -testResultsFormat 'JUnit' `
-    -installTestFramework:$installTestFramework `
-    -installTestLibraries:$installTestLibraries `
-    -installPerformanceToolkit:$installPerformanceToolkit `
-    -enableCodeCop:$enableCodeCop `
-    -enableAppSourceCop:$enableAppSourceCop `
-    -enablePerTenantExtensionCop:$enablePerTenantExtensionCop `
-    -enableUICop:$enableUICop `
-    -rulesetFile $rulesetFile `
-    -useDefaultAppSourceRuleSet:$useDefaultAppSourceRuleSet `
-    -azureDevOps:($environment -eq 'AzureDevOps') `
-    -gitLab:($environment -eq 'GitLab') `
-    -gitHubActions:($environment -eq 'GitHubActions') `
-    -AppSourceCopMandatoryAffixes $appSourceCopMandatoryAffixes `
-    -AppSourceCopSupportedCountries $appSourceCopSupportedCountries `
-    -additionalCountries $additionalCountries `
-    -buildArtifactFolder $buildArtifactFolder `
-    -CreateRuntimePackages:$CreateRuntimePackages `
-    -appBuild $appBuild -appRevision $appRevision `
-    -enableTaskScheduler:$enableTaskScheduler `
-    -NewBcContainer {
+-pipelinename $pipelineName `
+-containerName $containerName `
+-imageName $imageName `
+-artifact $artifact `
+-accept_insiderEula `
+-memoryLimit $memoryLimit `
+-baseFolder $baseFolder `
+-licenseFile $LicenseFile `
+-installApps $installApps `
+-previousApps $previousApps `
+-appFolders $appFolders `
+-testFolders $testFolders `
+-doNotRunTests:$doNotRunTests `
+-testResultsFile $testResultsFile `
+-testResultsFormat 'JUnit' `
+-installTestFramework:$installTestFramework `
+-installTestLibraries:$installTestLibraries `
+-installPerformanceToolkit:$installPerformanceToolkit `
+-enableCodeCop:$enableCodeCop `
+-enableAppSourceCop:$enableAppSourceCop `
+-enablePerTenantExtensionCop:$enablePerTenantExtensionCop `
+-enableUICop:$enableUICop `
+-rulesetFile $rulesetFile `
+-useDefaultAppSourceRuleSet:$useDefaultAppSourceRuleSet `
+-azureDevOps:($environment -eq 'AzureDevOps') `
+-gitLab:($environment -eq 'GitLab') `
+-gitHubActions:($environment -eq 'GitHubActions') `
+-AppSourceCopMandatoryAffixes $appSourceCopMandatoryAffixes `
+-AppSourceCopSupportedCountries $appSourceCopSupportedCountries `
+-additionalCountries $additionalCountries `
+-buildArtifactFolder $buildArtifactFolder `
+-CreateRuntimePackages:$CreateRuntimePackages `
+-appBuild $appBuild -appRevision $appRevision `
+-enableTaskScheduler:$enableTaskScheduler `
+-NewBcContainer {
     Param([Hashtable]$parameters)
     $parameters += @{ "dns" = "8.8.8.8" }
     New-BcContainer @parameters
@@ -138,7 +140,7 @@ Run-AlPipeline @params `
         $progressPreference = 'SilentlyContinue'
     }
 }
-    
+
 if ($environment -eq 'AzureDevOps') {
     Write-Host "##vso[task.setvariable variable=TestResults]$allTestResults"
 }
