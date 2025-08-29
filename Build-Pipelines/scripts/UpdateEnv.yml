@@ -20,6 +20,8 @@ jobs:
     steps:
       - task: PowerShell@2
         displayName: "Update environment"
+        env:
+          bcSaasCustomers: $(bcSaasCustomers)
         inputs:
           targetType: filePath
           filePath: '$(Build.Repository.LocalPath)\Build-Pipelines\scripts\UpdateEnv.ps1'

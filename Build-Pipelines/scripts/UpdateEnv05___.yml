@@ -1,11 +1,11 @@
 name: Update environment
 schedules:
-- cron: '0 5 * * *'
-  displayName: At 5:00am each day
-  branches:
-    include:
-    - main  
-  always: true
+  - cron: "0 5 * * *"
+    displayName: At 5:00am each day
+    branches:
+      include:
+        - main
+    always: true
 
 resources:
   repositories:
@@ -27,6 +27,8 @@ jobs:
     steps:
       - task: PowerShell@2
         displayName: "Update environment"
+        env:
+          bcSaasCustomers: $(bcSaasCustomers)
         inputs:
           targetType: filePath
           filePath: '$(Build.Repository.LocalPath)\Build-Pipelines\scripts\UpdateEnv.ps1'

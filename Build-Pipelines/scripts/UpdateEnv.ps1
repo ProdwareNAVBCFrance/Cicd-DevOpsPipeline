@@ -13,9 +13,9 @@ Write-Host $environmentName
 
 $aadAppRedirectUri = "http://localhost"                   # partner's AAD app redirect URI
 $OutPath = "$($PSScriptRoot)\bcSaasCustomers.json"
-$bcSaasbcSaasCustomersCustomers = $env:bcSaasCustomers
+$bcSaasCustomers = $env:bcSaasCustomers
 
-$response = Invoke-RestMethod -Uri $bcSaasbcSaasCustomersCustomers -UseBasicParsing -ContentType "application/json" -OutFile $OutPath
+$response = Invoke-RestMethod -Uri $bcSaasCustomers -UseBasicParsing -ContentType "application/json" -OutFile $OutPath
 $tenants = Get-Content $OutPath -raw | Out-String | ConvertFrom-Json
 $refreshToken = $tenants.value.where({ $_.tenantId -eq "$aadTenantId" }).refreshToken
 $authContext = New-BcAuthContext -tenantID $aadTenantId -refreshToken $refreshToken
