@@ -1,0 +1,34 @@
+name: Update environment
+schedules:
+- cron: '0 5 1 * *'
+  displayName: At 5:00am on the 1st
+  branches:
+    include:
+    - main
+  always: true
+
+resources:
+  repositories:
+    - repository: Shared
+      name: ProdwareNAVBCFrance/Cicd-DevOpsPipeline
+      type: github
+      ref: main #branch name
+      endpoint: cicd
+
+jobs:
+  - job: Env_update
+    timeoutInMinutes: 300
+    variables:
+      build.clean: all
+      platform: x64
+      skipComponentGovernanceDetection: True
+      EnableAppSourceProcess: False
+
+    steps:
+      - task: PowerShell@2
+        displayName: "Update environment"
+        inputs:
+          targetType: filePath
+          filePath: '$(Build.Repository.LocalPath)\Build-Pipelines\scripts\UpdateEnv.ps1'
+          arguments: "-aadTenantId $(aadTenantId) -newEnvironmentName $(newEnvironmentName) -environmentName $(environmentName)"
+          failOnStderr: true

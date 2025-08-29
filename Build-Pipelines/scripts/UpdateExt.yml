@@ -1,0 +1,27 @@
+name: Update environment
+
+resources:
+  repositories:
+    - repository: Shared
+      name: ProdwareNAVBCFrance/Cicd-DevOpsPipeline
+      type: github
+      ref: main #branch name
+      endpoint: cicd
+
+jobs:
+  - job: Env_update
+    timeoutInMinutes: 300
+    variables:
+      build.clean: all
+      platform: x64
+      skipComponentGovernanceDetection: True
+      EnableAppSourceProcess: False
+
+    steps:
+      - task: PowerShell@2
+        displayName: "Update environment"
+        inputs:
+          targetType: filePath
+          filePath: '$(Build.Repository.LocalPath)\Build-Pipelines\scripts\UpdateExt.ps1'
+          arguments: "-aadTenantId $(aadTenantId) -environmentName $(environmentName) -globalExt:$$(globalExt) -scheduleBCUpdate:$$(scheduleBCUpdate) -useEnvironmentUpdateWindow:$$(useEnvironmentUpdateWindow)"
+          failOnStderr: true

@@ -1,0 +1,55 @@
+
+parameters:
+- name: EnableAppSourceProcess
+  type: boolean
+  default: false
+
+steps:
+- checkout: self
+- checkout: Shared
+
+- task: PowerShell@2
+  displayName: 'Prepare scripts for App Repo'
+  inputs:
+    targetType: 'inline'
+    script: Copy-Item '$(Build.Repository.LocalPath)\Cicd-DevOpsPipeline\Build-Pipelines\scripts' -Destination '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)' -Recurse -Force
+
+- task: PowerShell@2
+  displayName: 'Set BuildNumber'
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)\scripts\SetBuildNumber.ps1'
+    arguments: '-appRevision $(Build.BuildID)'
+
+- task: PowerShell@2
+  displayName: 'Run Pipeline'
+  env:
+    LicenseFile: '$(LicenseFile)'
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)\scripts\DevOps-Pipeline.ps1'
+    arguments: '-environment "AzureDevOps" -version $(replacetargetversion) -appBuild $(appBuild) -appRevision $(Build.BuildID) -AppSourceProcess:("${{ parameters.EnableAppSourceProcess }}" -eq "True")'
+    failOnStderr: true
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
+  condition: and(succeeded(),ne(variables['TestResults'],''))
+  inputs:
+    testResultsFormat: JUnit
+    testResultsFiles: '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)\$(testResults)'
+    failTaskOnFailedTests: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: output
+
+- task: PowerShell@2
+  displayName: 'Cleanup'
+  condition: always()
+  inputs:
+    targetType: filePath
+    filePath: '$(Build.Repository.LocalPath)\$(BitBucketRepositoryName)\scripts\Cleanup.ps1'
+    arguments: '-environment "AzureDevOps"'
+    failOnStderr: false
